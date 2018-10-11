@@ -1,7 +1,19 @@
 package com.example.tibo.myrides;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.icu.text.LocaleDisplayNames;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -9,5 +21,29 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+
+        TextView aboutTxt = (TextView)findViewById(R.id.txtAbout);
+
+        printKeyHash(aboutTxt);
+
+
+    }
+
+    private void printKeyHash(TextView aboutTxt) {
+        try{
+            PackageInfo info = getPackageManager().getPackageInfo("com.example.tibo.myrides", PackageManager.GET_SIGNATURES);
+            for(Signature signature : info.signatures)
+            {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash",Base64.encodeToString(md.digest(),Base64.DEFAULT));
+
+                aboutTxt.setText(Base64.encodeToString(md.digest(),Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 }
