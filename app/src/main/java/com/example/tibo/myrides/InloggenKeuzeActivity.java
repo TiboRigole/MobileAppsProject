@@ -61,13 +61,18 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
                         loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                             @Override
                             public void onCompleted(JSONObject me, GraphResponse response) {
-                                if  (response.getError() != null){
-                                    Log.d("inloggenskeer","geen error");
+                                if  (response.getError() != null){ //als er geen error is
+                                    Log.d("inloggenskeer","wel error, lijn65");
                                 }
                                 else{
-                                    Log.d("inloggenskeer","wel error?");
+                                    Log.d("inloggenskeer","geen error, lijn 68");
                                     String email =  me.optString("email");
                                     String id = me.optString("id");
+                                    Log.d("inloggenskeer","email var = ");
+                                    Log.d("inloggenskeer",email);
+                                    Log.d("inloggenskeer",response.toString());
+
+
                                 }
                             }
                         }).executeAsync();
@@ -89,34 +94,54 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
         if(AccessToken.getCurrentAccessToken() !=null)
         {
             //jsut set user id
+            Log.d("inloggenskeer","al in gelogd");
             textViewEmail.setText(AccessToken.getCurrentAccessToken().getUserId());
         }
 
         callbackManager = CallbackManager.Factory.create();
-
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 //textview set text "successfully logged in"
 
-                GraphRequest.newMeRequest(
+                GraphRequest theRequest = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                             @Override
                             public void onCompleted(JSONObject me, GraphResponse response) {
                                 if  (response.getError() != null){
-                                    Log.d("inloggenskeer","geen error");
+                                    Log.d("inloggenskeer","wel error, geen idee wat todo");
                                 }
                                 else{
-                                    Log.d("inloggenskeer","wel error?");
+                                    Log.d("inloggenskeer","geen error");
                                     String email =  me.optString("email");
                                     String id = me.optString("id");
+                                    Log.d("inloggenskeer","emailvar116");
+                                    Log.d("inloggenskeer","response:");
+                                    Log.d("inloggenskeer",response.toString());
+                                    Log.d("inloggenskeer","JSONObject");
+                                    Log.d("inloggenskeer",me.toString());
+
 
                                     //value setten?
-                                    textViewEmail.setText(email);
+                                    try {
+                                        textViewEmail.setText(me.get("email").toString());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        Log.d("inloggenskeer","probleem bij text setten van email");
+                                    }
                                 }
                             }
-                        }).executeAsync();
+                        });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields","id,name,email");
+                theRequest.setParameters(parameters);
+                theRequest.executeAsync();
+
+                Log.d("inloggenskeer","lijn 137");
+                Log.d("inloggenskeer",parameters.toString());
+
             }
 
             @Override
@@ -129,6 +154,10 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
 
             }
         });
+
+        Log.d("inloggenskeer","we zitten hierlijn 151");
+
+
 
 
     }
