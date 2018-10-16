@@ -27,6 +27,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button naarDBTest = (Button)findViewById(R.id.naarDBTest);
+        naarDBTest.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, DataBaseTestActvity.class));
+            }
+        });
 
 
         //button voor naar de inlog keuze page
