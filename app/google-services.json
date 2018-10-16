@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1042394037632",
+    "firebase_url": "https://distributedsystemsprojec-bd15e.firebaseio.com",
+    "project_id": "distributedsystemsprojec-bd15e",
+    "storage_bucket": "distributedsystemsprojec-bd15e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042394037632:android:4cda9cc9895a7050",
+        "android_client_info": {
+          "package_name": "com.example.tibo.myrides"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042394037632-s2fq7v1t4dipnsda6k0annncknfif5gp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tibo.myrides",
+            "certificate_hash": "7873a288240ea70d94d1d3da48c4ca6b4cf3f0c3"
+          }
+        },
+        {
+          "client_id": "1042394037632-efs3707apprfvr6ohp4gupmjkul63tn5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD2ZMDGk1FN406d5Oej9u6hs_uehsn4r8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1042394037632-efs3707apprfvr6ohp4gupmjkul63tn5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
