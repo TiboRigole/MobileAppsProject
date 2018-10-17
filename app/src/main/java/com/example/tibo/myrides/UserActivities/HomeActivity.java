@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.example.tibo.myrides.InlogActivity;
 import com.example.tibo.myrides.MainActivity;
 import com.example.tibo.myrides.R;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -46,7 +47,8 @@ public class HomeActivity extends AppCompatActivity {
                 //log de user uit
                 logout(currentUser);
 
-                //@TODO: log uit van facebook ook
+                //log uit van facebook
+                LoginManager.getInstance().logOut();
 
                 //ga terug naar de mainActivity
                 startActivity(new Intent(HomeActivity.this, MainActivity.class));

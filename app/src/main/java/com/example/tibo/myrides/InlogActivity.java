@@ -84,7 +84,7 @@ public class InlogActivity extends AppCompatActivity {
 
                                     Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
 
-                                    // @TODO: ga naar ingelogde pagina
+                                    //ga naar ingelogde pagina
                                     //wacht 3 seconden
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
@@ -159,6 +159,7 @@ public class InlogActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){
             // @TODO: doorverwijzen naar home van user
+            updateUIAfterLogin(currentUser);
         }
     }
 
@@ -193,8 +194,24 @@ public class InlogActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("FBLOGIN", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUIAfterLogin(user);
+
+                            //toast die login successful zegt, en 3 seconden wacht
+                            Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
+
+                            //ga naar ingelogde pagina
+                            //wacht 3 seconden
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //wat er moet gebeuren na 5 seconden
+                                    Log.d("LOGINDEBUG","3 seconden gewacht!");
+
+                                    //naar homeActivity
+                                    updateUIAfterLogin(mAuth.getCurrentUser());
+
+                                }
+                            }, 1500);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("FBLOGIN", "signInWithCredential:failure", task.getException());
