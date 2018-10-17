@@ -44,7 +44,8 @@
         </activity>
         <!-- EINDE FACEBOOK STUFF -->
 
-        <activity android:name=".RegistreerActvity"></activity>
+        <activity android:name=".RegistreerActvity" />
+        <activity android:name=".UserActivities.HomeActivity"></activity>
     </application>
 
 </manifest>
