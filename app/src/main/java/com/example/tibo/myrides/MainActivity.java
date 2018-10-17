@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         inlogButton = (Button)findViewById(R.id.inlogButton);
 
         //registreerButton init
-        registreerButton = (Button)findViewById(R.id.registreerButton);
+        registreerButton = (Button)findViewById(R.id.naarRegistreerPaginaButton);
 
         //infoButton logica
         infoButton.setOnClickListener(new View.OnClickListener() {

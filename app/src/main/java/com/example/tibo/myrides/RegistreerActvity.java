@@ -1,12 +1,16 @@
 package com.example.tibo.myrides;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,7 +24,12 @@ public class RegistreerActvity extends AppCompatActivity {
 
     private EditText usernameText;
     private EditText paswoordText;
+    private EditText bevestigPaswoordText;
 
+    private Button registreerButton;
+
+    private ImageView warningBevestiging;
+    private ImageView correcteBevestiging;
 
     private FirebaseAuth mAuth;
     @Override
@@ -33,14 +42,20 @@ public class RegistreerActvity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
 
         //teksveldjes init
-        usernameText = (EditText) findViewById(R.id.emailDBTest);
-        paswoordText = (EditText) findViewById(R.id.paswoordDBTest);
+        usernameText = (EditText) findViewById(R.id.emailEditView);
+        paswoordText = (EditText) findViewById(R.id.paswoordEditView);
+        bevestigPaswoordText= (EditText) findViewById(R.id.confirmPaswoordEditView);
 
-        Button dbTest = (Button) findViewById(R.id.buttonDbTest);
+        // init button
+        registreerButton = (Button) findViewById(R.id.registreerButton);
 
 
+        //init images
+        warningBevestiging= findViewById(R.id.warningPaswoordConfirmatie);
+        correcteBevestiging= findViewById(R.id.correctPaswoordConfirmatie);
 
-        dbTest.setOnClickListener(new View.OnClickListener() {
+
+        registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //LOGICA DIE IETS VERSTUURT NAAR DE DATABANK MOET HIER, MVG
@@ -48,6 +63,32 @@ public class RegistreerActvity extends AppCompatActivity {
                 Log.d("FIREBASE","knop voordat de logica ervan wordt uitgevoerd");
                 Log.d("FIREBASE",usernameText.getText().toString());
                 createAccount(usernameText.getText().toString(), paswoordText.getText().toString());
+            }
+        });
+
+        bevestigPaswoordText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(bevestigPaswoordText.getText().toString().equals(paswoordText.getText().toString())){
+                    warningBevestiging.setVisibility(View.INVISIBLE);
+                    correcteBevestiging.setVisibility(View.VISIBLE);
+
+                }
+                else{
+                    warningBevestiging.setVisibility(View.VISIBLE);
+                    correcteBevestiging.setVisibility(View.INVISIBLE);
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 

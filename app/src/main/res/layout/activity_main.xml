@@ -8,8 +8,8 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/registreerButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/naarRegistreerPaginaButton"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="340dp"
         android:text="registeren"
@@ -30,7 +30,7 @@
 
     <Button
         android:id="@+id/inlogButton"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Inloggen"
@@ -44,8 +44,8 @@
 
     <ImageButton
         android:id="@+id/infoImageButton"
-        android:layout_width="58dp"
-        android:layout_height="54dp"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
