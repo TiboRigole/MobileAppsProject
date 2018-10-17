@@ -53,7 +53,6 @@ public class InlogActivity extends AppCompatActivity {
         //GUI
         //init buttons
         fbloginButton = findViewById(R.id.fb_login_button);
-
         logInButton = (Button) findViewById(R.id.logInButton);
 
         //init textviews
@@ -61,6 +60,8 @@ public class InlogActivity extends AppCompatActivity {
         paswoordTextView = findViewById(R.id.editTextPaswoord);
 
         //logica buttons
+
+        //logica inlogbutton met email adres en paswoord
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +81,7 @@ public class InlogActivity extends AppCompatActivity {
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Log.d("LOGINDEBUG",user.toString());
                                     Log.d("LOGINDEBUG","updateUIAfterLogin enter");
-                                    updateUIAfterLogin(user);
+
                                     Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
 
                                     // @TODO: ga naar ingelogde pagina
@@ -92,7 +93,7 @@ public class InlogActivity extends AppCompatActivity {
                                             Log.d("LOGINDEBUG","3 seconden gewacht!");
 
                                             //naar homeActivity
-                                            startActivity(new Intent(InlogActivity.this, HomeActivity.class));
+                                            updateUIAfterLogin(mAuth.getCurrentUser());
 
                                         }
                                     }, 1500);
@@ -116,10 +117,13 @@ public class InlogActivity extends AppCompatActivity {
         //FACEBOOK
         //init manager to handle facebook manager
         callbackManager = CallbackManager.Factory.create();
+        Log.d("FBLOGIN","callbackmanager created");
 
         // logica facebook
         // opvragen email en foto
         fbloginButton.setReadPermissions("email", "public_profile");
+        Log.d("FBLOGIN","readpermissions set");
+
         // inlog callback na button press
         fbloginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -133,12 +137,13 @@ public class InlogActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 Log.d("FBLOGIN", "facebook:onCancel");
-
+                Toast.makeText(InlogActivity.this,"facebook login gecanceld!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d("FBLOGIN", "facebook:onError", error);
+                Toast.makeText(InlogActivity.this,"facebook login error!", Toast.LENGTH_SHORT).show();
 
                 //updateUI(null);
 
@@ -150,9 +155,13 @@ public class InlogActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        //als de ingelogd wordt geladen, checkt hij of er een user ingelogd is
+        //zoja, gaat hij direct naar de homepagina ervan
+        Log.d("FBLOGIN", "onstart methode binnengekomen");
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
         // Als er al iemand ingelogd is, doorverwijzen naar volgende pagina
         updateUIAfterLogin(currentUser);
     }
@@ -160,6 +169,8 @@ public class InlogActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.d("FBLOGIN", "onactivityResult binnengekomen!");
         super.onActivityResult(requestCode, resultCode, data);
 
         // Pass the activity result back to the Facebook SDK
@@ -169,10 +180,11 @@ public class InlogActivity extends AppCompatActivity {
 
     /**
      * facebook auth with token
+     * gebeurt enkel als we met facebook inloggen!
      * @param token
      */
     private void handleFacebookAccessToken(AccessToken token) {
-        Log.d("FACEBOOKLOGIN", "handleFacebookAccessToken:" + token);
+        Log.d("FBLOGIN", "handleFacebookAccessToken:" + token);
 
         // genereer credentials op basis van token
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -184,12 +196,12 @@ public class InlogActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("FACEBOOKLOGIN", "signInWithCredential:success");
+                            Log.d("FBLOGIN", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUIAfterLogin(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("FACEBOOKLOGIN", "signInWithCredential:failure", task.getException());
+                            Log.w("FBLOGIN", "signInWithCredential:failure", task.getException());
                             Toast.makeText(InlogActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 
@@ -199,7 +211,7 @@ public class InlogActivity extends AppCompatActivity {
                 });
     }
 
-
+    // @TODO: signout methode ergens implementeren!
     public void signOut() {
         mAuth.signOut();
         LoginManager.getInstance().logOut();
@@ -210,7 +222,10 @@ public class InlogActivity extends AppCompatActivity {
     private void updateUIAfterLogin(FirebaseUser user) {
 
         if (user != null) {
+
             // @TODO: update UI op basis van data horende bij user, waarschijnlijk doorverwijzing naar volgende pagina
+            startActivity(new Intent(InlogActivity.this, HomeActivity.class));
+
         } else {
             // @TODO: update UI wannneer er geen account ingelogd is
         }
