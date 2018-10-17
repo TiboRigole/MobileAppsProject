@@ -7,9 +7,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 public class MainActivity extends AppCompatActivity {
 
 
@@ -41,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, DataBaseTestActvity.class));
+                startActivity(new Intent(MainActivity.this, RegistreerActvity.class));
             }
         });
 

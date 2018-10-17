@@ -15,7 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class DataBaseTestActvity extends AppCompatActivity {
+public class RegistreerActvity extends AppCompatActivity {
 
 
     private EditText usernameText;
@@ -27,7 +27,7 @@ public class DataBaseTestActvity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_base_test_actvity);
+        setContentView(R.layout.activity_registreer);
 
         // FIREBASE INIT
         mAuth=FirebaseAuth.getInstance();
@@ -61,6 +61,7 @@ public class DataBaseTestActvity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        System.out.println("current "+ currentUser.getDisplayName());
 //        Toast.makeText(this, currentUser.toString(), Toast.LENGTH_SHORT).show();
     }
 
@@ -73,11 +74,11 @@ public class DataBaseTestActvity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("FIREBASE", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(DataBaseTestActvity.this, user.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegistreerActvity.this, user.toString(), Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("FIREBASE", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(DataBaseTestActvity.this, "Authentication failed.",
+                            Toast.makeText(RegistreerActvity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             }
 

@@ -44,7 +44,7 @@
         </activity>
         <!-- EINDE FACEBOOK STUFF -->
 
-        <activity android:name=".DataBaseTestActvity"></activity>
+        <activity android:name=".RegistreerActvity"></activity>
     </application>
 
 </manifest>

@@ -42,11 +42,10 @@ import java.util.Arrays;
 //https://github.com/firebase/quickstart-android/blob/8ab219cb636ff5f7e8f8fdf5f8f6f77b3094e0f8/auth/app/src/main/java/com/google/firebase/quickstart/auth/java/FacebookLoginActivity.java#L117-L123
 public class InloggenKeuzeActivity extends AppCompatActivity {
 
-    private Button logInButton;
+    private Button registreerButton;
 
     //firebase stuff
     private FirebaseAuth mAuth;
-
 
     //facebook login button
     private CallbackManager callbackManager;
@@ -56,10 +55,61 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
     private TextView emailTextView;
     private TextView paswoordTextView;
 
+    //gewone login button
+    private Button logInButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inloggen_keuze);
+
+        //registreerButton
+        registreerButton = (Button) findViewById(R.id.RegistreerButton);
+
+        //registreerButton logica
+        registreerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(InloggenKeuzeActivity.this, RegistreerActvity.class);
+                startActivity(intent);
+            }
+        });
+
+        //logInButton (niet facebook)
+        logInButton = (Button) findViewById(R.id.logInButton);
+
+        //logInButton Logica
+        logInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = emailTextView.getText().toString();
+                String password = paswoordTextView.getText().toString();
+
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(InloggenKeuzeActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d("firebaseloginattempt", "loginUserWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    updateUI(user);
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w("firebaseloginattempt", "createUserWithEmail:failure", task.getException());
+                                    Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                    updateUI(null);
+                                }
+
+                                // ...
+                            }
+                        });
+
+
+
+            }
+        });
 
         //textViews
         emailTextView = findViewById(R.id.editTextEmail);
@@ -153,7 +203,7 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
     public void signOut() {
         mAuth.signOut();
         LoginManager.getInstance().logOut();
-
+        System.out.println("gaat in logout");
         updateUI(null);
     }
 
