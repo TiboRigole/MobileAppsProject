@@ -6,9 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ImageButton infoButton;
+    private Button inlogButton;
+    private Button registreerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,41 +20,37 @@ public class MainActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+        //infoButton init
+        infoButton = (ImageButton) findViewById(R.id.infoImageButton);
 
+        //inlogButton init
+        inlogButton = (Button)findViewById(R.id.inlogButton);
 
+        //registreerButton init
+        registreerButton = (Button)findViewById(R.id.registreerButton);
 
-
-
-        //button voor naar de about page
-        Button naarAbout = (Button)findViewById(R.id.buttonAbout);
-
-        naarAbout.setOnClickListener(new View.OnClickListener(){
-
+        //infoButton logica
+        infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                //begin van de app
             }
         });
 
-        Button naarDBTest = (Button)findViewById(R.id.naarDBTest);
-        naarDBTest.setOnClickListener(new View.OnClickListener(){
+        //inlogButton logica
+        inlogButton.setOnClickListener(new View.OnClickListener(){
 
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, InlogActivity.class));
+            }
+        });
+
+        //registreerButton logica
+        registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, RegistreerActvity.class));
-            }
-        });
-
-
-        //button voor naar de inlog keuze page
-        Button naarKeuzeInloggen = (Button)findViewById(R.id.buttonInloggen);
-
-        naarKeuzeInloggen.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, InloggenKeuzeActivity.class));
             }
         });
     }

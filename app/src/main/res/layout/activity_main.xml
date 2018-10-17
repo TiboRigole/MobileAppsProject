@@ -8,17 +8,15 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/buttonAbout"
+        android:id="@+id/registreerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:fadingEdge="horizontal"
-        android:text="about"
-        android:theme="@style/buttonTheme"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginTop="340dp"
+        android:text="registeren"
+        android:theme="@style/buttonStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView_logo_app"
@@ -31,12 +29,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/buttonInloggen"
+        android:id="@+id/inlogButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Inloggen"
-        android:theme="@style/buttonTheme"
+        android:theme="@style/buttonStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
@@ -44,18 +42,20 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView_logo_app"
         app:layout_constraintVertical_bias="0.084" />
 
-    <Button
-        android:id="@+id/naarDBTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="30dp"
+    <ImageButton
+        android:id="@+id/infoImageButton"
+        android:layout_width="58dp"
+        android:layout_height="54dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="naarDBTest"
+        android:layout_marginBottom="8dp"
+        android:background="@color/colorTransparant"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonInloggen" />
+        app:srcCompat="@drawable/ic_info_button"
+        tools:ignore="VectorDrawableCompat" />
+        <!-- scrCompat is gesupressed -->
+
+
 
 </android.support.constraint.ConstraintLayout>

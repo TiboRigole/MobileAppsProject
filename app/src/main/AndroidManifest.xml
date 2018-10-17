@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AboutActivity" />
-        <activity android:name=".InloggenKeuzeActivity" />
+        <activity android:name=".InlogActivity" />
 
         <!-- FACEBOOK STUFF -->
         <activity
