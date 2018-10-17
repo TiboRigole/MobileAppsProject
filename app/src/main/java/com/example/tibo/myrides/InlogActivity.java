@@ -155,15 +155,11 @@ public class InlogActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        //als de ingelogd wordt geladen, checkt hij of er een user ingelogd is
-        //zoja, gaat hij direct naar de homepagina ervan
-        Log.d("FBLOGIN", "onstart methode binnengekomen");
-
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        // Als er al iemand ingelogd is, doorverwijzen naar volgende pagina
-        updateUIAfterLogin(currentUser);
+        if(currentUser!=null){
+            // @TODO: doorverwijzen naar home van user
+        }
     }
 
 

@@ -102,8 +102,9 @@ public class RegistreerActvity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        System.out.println("current "+ currentUser.getDisplayName());
-//        Toast.makeText(this, currentUser.toString(), Toast.LENGTH_SHORT).show();
+        if(currentUser!=null){
+            // @TODO: doorverwijzen naar home van user
+        }
     }
 
     public void createAccount(String email, String password){

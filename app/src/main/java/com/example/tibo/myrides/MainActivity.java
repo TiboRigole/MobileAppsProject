@@ -8,17 +8,28 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton infoButton;
     private Button inlogButton;
     private Button registreerButton;
 
+
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+
+        // FIREBASE INIT
+        mAuth=FirebaseAuth.getInstance();
+
 
         //infoButton init
         infoButton = (ImageButton) findViewById(R.id.infoImageButton);
@@ -55,6 +66,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser!=null){
+            // @TODO: doorverwijzen naar home van user
+        }
+    }
 
 
 
