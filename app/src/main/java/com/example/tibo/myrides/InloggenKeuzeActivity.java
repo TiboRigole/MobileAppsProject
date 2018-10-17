@@ -44,18 +44,18 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
 
     private Button registreerButton;
 
-    //firebase stuff
+    //firebase authentication handler
     private FirebaseAuth mAuth;
 
-    //facebook login button
+    //manager voor facebook login
     private CallbackManager callbackManager;
     private LoginButton fbloginButton;
 
-    //textViews
+    //email en paswoord textviews
     private TextView emailTextView;
     private TextView paswoordTextView;
 
-    //gewone login button
+    //login button
     private Button logInButton;
 
     @Override
@@ -63,10 +63,17 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inloggen_keuze);
 
-        //registreerButton
+        //GUI
+        //init buttons
+        fbloginButton = findViewById(R.id.fb_login_button);
         registreerButton = (Button) findViewById(R.id.RegistreerButton);
+        logInButton = (Button) findViewById(R.id.logInButton);
 
-        //registreerButton logica
+        //init textviews
+        emailTextView = findViewById(R.id.editTextEmail);
+        paswoordTextView = findViewById(R.id.editTextPaswoord);
+
+        //logica buttons
         registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,53 +82,45 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
             }
         });
 
-        //logInButton (niet facebook)
-        logInButton = (Button) findViewById(R.id.logInButton);
-
-        //logInButton Logica
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = emailTextView.getText().toString();
                 String password = paswoordTextView.getText().toString();
 
-                mAuth.createUserWithEmailAndPassword(email, password)
+                mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(InloggenKeuzeActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    Log.d("firebaseloginattempt", "loginUserWithEmail:success");
+                                    Log.d("firebaseloginattempt", "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    updateUI(user);
+                                    updateUIAfterLogin(user);
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Log.w("firebaseloginattempt", "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                    Log.w("firebaseloginattempt", "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(InloggenKeuzeActivity.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
-                                    updateUI(null);
                                 }
-
-                                // ...
                             }
                         });
-
-
-
             }
         });
 
-        //textViews
-        emailTextView = findViewById(R.id.editTextEmail);
-        paswoordTextView = findViewById(R.id.editTextPaswoord);
 
+        //FIREBASE
         //init mAuth
         mAuth = FirebaseAuth.getInstance();
 
-        //facebook gerelateerde stuff
+        //FACEBOOK
+        //init manager to handle facebook manager
         callbackManager = CallbackManager.Factory.create();
-        fbloginButton = findViewById(R.id.fb_login_button);
+
+        // logica facebook
+        // opvragen email en foto
         fbloginButton.setReadPermissions("email", "public_profile");
+        // inlog callback na button press
         fbloginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -147,80 +146,73 @@ public class InloggenKeuzeActivity extends AppCompatActivity {
         });
     }
 
-        // [START on_start_check_user]
-        @Override
-        public void onStart() {
-            super.onStart();
-            // Check if user is signed in (non-null) and update UI accordingly.
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            updateUI(currentUser);
-        }
-        // [END on_start_check_user]
 
-        // [START on_activity_result]
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    public void onStart() {
+        super.onStart();
 
-            // Pass the activity result back to the Facebook SDK
-            callbackManager.onActivityResult(requestCode, resultCode, data);
-        }
-        // [END on_activity_result]
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        // Als er al iemand ingelogd is, doorverwijzen naar volgende pagina
+        updateUIAfterLogin(currentUser);
+    }
 
-        // [START auth_with_facebook]
-        private void handleFacebookAccessToken(AccessToken token) {
-            Log.d("FACEBOOKLOGIN", "handleFacebookAccessToken:" + token);
-            // [START_EXCLUDE silent]
-            //showProgressDialog();
-            // [END_EXCLUDE]
 
-            AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-            mAuth.signInWithCredential(credential)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d("FACEBOOKLOGIN", "signInWithCredential:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                updateUI(user);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w("FACEBOOKLOGIN", "signInWithCredential:failure", task.getException());
-                                Toast.makeText(InloggenKeuzeActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                                updateUI(null);
-                            }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                            // [START_EXCLUDE]
-                            //hideProgressDialog();
-                            // [END_EXCLUDE]
+        // Pass the activity result back to the Facebook SDK
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    /**
+     * facebook auth with token
+     * @param token
+     */
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d("FACEBOOKLOGIN", "handleFacebookAccessToken:" + token);
+
+        // genereer credentials op basis van token
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+
+        // sign in aan de hand van firebase handler met credential (dus in back-end van firebase)
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("FACEBOOKLOGIN", "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUIAfterLogin(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("FACEBOOKLOGIN", "signInWithCredential:failure", task.getException());
+                            Toast.makeText(InloggenKeuzeActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
                         }
-                    });
-        }
-        // [END auth_with_facebook]
+
+                    }
+                });
+    }
+
 
     public void signOut() {
         mAuth.signOut();
         LoginManager.getInstance().logOut();
-        System.out.println("gaat in logout");
-        updateUI(null);
+        Toast.makeText(InloggenKeuzeActivity.this, "Je bent uitgelogd",
+                Toast.LENGTH_SHORT).show();
     }
 
-    private void updateUI(FirebaseUser user) {
-        //hideProgressDialog();
+    private void updateUIAfterLogin(FirebaseUser user) {
+
         if (user != null) {
-            //emailTextView.setText(getString("umoeder", user.getDisplayName()));
-            //paswoordTextView.setText(getString("umoderde2e", user.getUid()));
-
-            //findViewById(R.id.buttonFacebookLogin).setVisibility(View.GONE);
-            //findViewById(R.id.buttonFacebookSignout).setVisibility(View.VISIBLE);
+            // @TODO: update UI op basis van data horende bij user, waarschijnlijk doorverwijzing naar volgende pagina
         } else {
-            emailTextView.setText("je bent uitgelogd");
-            paswoordTextView.setText(null);
-
-            //findViewById(R.id.buttonFacebookLogin).setVisibility(View.VISIBLE);
-            //findViewById(R.id.buttonFacebookSignout).setVisibility(View.GONE);
+            // @TODO: update UI wannneer er geen account ingelogd is
         }
     }
 
