@@ -3,12 +3,16 @@ package com.example.tibo.myrides;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -19,6 +23,13 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -28,162 +39,141 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
-
+//https://github.com/firebase/quickstart-android/blob/8ab219cb636ff5f7e8f8fdf5f8f6f77b3094e0f8/auth/app/src/main/java/com/google/firebase/quickstart/auth/java/FacebookLoginActivity.java#L117-L123
 public class InloggenKeuzeActivity extends AppCompatActivity {
 
+    private Button logInButton;
+
+    //firebase stuff
+    private FirebaseAuth mAuth;
+
+
+    //facebook login button
     private CallbackManager callbackManager;
-    private TextView textViewEmail;
-    private LoginButton loginButton;
-    private ImageView imageAvatar;
+    private LoginButton fbloginButton;
+
+    //textViews
+    private TextView emailTextView;
+    private TextView paswoordTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inloggen_keuze);
 
-        //textView email instellen
-        textViewEmail = findViewById(R.id.txtEmail);
+        //textViews
+        emailTextView = findViewById(R.id.editTextEmail);
+        paswoordTextView = findViewById(R.id.editTextPaswoord);
 
-        //facebook foto kader instellen
-        imageAvatar = (ImageView)findViewById(R.id.avatar);
+        //init mAuth
+        mAuth = FirebaseAuth.getInstance();
 
-        //facebook login methoden
+        //facebook gerelateerde stuff
         callbackManager = CallbackManager.Factory.create();
-
-        loginButton = (LoginButton)  findViewById(R.id.login_buttonSituatie1);
-        loginButton.setReadPermissions(Arrays.asList("public_profile","email"));
-
-        //callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        fbloginButton = findViewById(R.id.fb_login_button);
+        fbloginButton.setReadPermissions("email", "public_profile");
+        fbloginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject me, GraphResponse response) {
-                                if  (response.getError() != null){ //als er geen error is
-                                    Log.d("inloggenskeer","wel error, lijn65");
-                                }
-                                else{
-                                    Log.d("inloggenskeer","geen error, lijn 68");
-                                    String email =  me.optString("email");
-                                    String id = me.optString("id");
-                                    Log.d("inloggenskeer","email var = ");
-                                    Log.d("inloggenskeer",email);
-                                    Log.d("inloggenskeer",response.toString());
+                Log.d("FBLOGIN", "facebook:onSuccess: " + loginResult);
 
-
-
-                                }
-                            }
-                        }).executeAsync();
-
+                handleFacebookAccessToken(loginResult.getAccessToken());
+                //go to next page?
             }
 
             @Override
             public void onCancel() {
-                //app code
+                Log.d("FBLOGIN", "facebook:onCancel");
+
             }
 
             @Override
             public void onError(FacebookException error) {
-                //app code
+                Log.d("FBLOGIN", "facebook:onError", error);
+
+                //updateUI(null);
+
             }
         });
+    }
 
-        //if already login
-        if(AccessToken.getCurrentAccessToken() !=null)
-        {
-            //jsut set user id
-            Log.d("inloggenskeer","al in gelogd");
-            textViewEmail.setText(AccessToken.getCurrentAccessToken().getUserId());
+        // [START on_start_check_user]
+        @Override
+        public void onStart() {
+            super.onStart();
+            // Check if user is signed in (non-null) and update UI accordingly.
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            updateUI(currentUser);
         }
+        // [END on_start_check_user]
 
-        callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                //textview set text "successfully logged in"
+        // [START on_activity_result]
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
 
-                GraphRequest theRequest = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject me, GraphResponse response) {
-                                if  (response.getError() != null){
-                                    Log.d("inloggenskeer","wel error, geen idee wat todo");
-                                }
-                                else{
-                                    Log.d("inloggenskeer","geen error");
-                                    String email =  me.optString("email");
-                                    String id = me.optString("id");
-                                    Log.d("inloggenskeer","emailvar116");
-                                    Log.d("inloggenskeer","response:");
-                                    Log.d("inloggenskeer",response.toString());
-                                    Log.d("inloggenskeer","JSONObject");
-                                    Log.d("inloggenskeer",me.toString());
+            // Pass the activity result back to the Facebook SDK
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+        // [END on_activity_result]
 
+        // [START auth_with_facebook]
+        private void handleFacebookAccessToken(AccessToken token) {
+            Log.d("FACEBOOKLOGIN", "handleFacebookAccessToken:" + token);
+            // [START_EXCLUDE silent]
+            //showProgressDialog();
+            // [END_EXCLUDE]
 
-                                    //value setten?
-                                    try {
-                                        textViewEmail.setText(me.get("email").toString());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        Log.d("inloggenskeer","probleem bij text setten van email");
-                                    }
-                                }
+            AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+            mAuth.signInWithCredential(credential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d("FACEBOOKLOGIN", "signInWithCredential:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                updateUI(user);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w("FACEBOOKLOGIN", "signInWithCredential:failure", task.getException());
+                                Toast.makeText(InloggenKeuzeActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                                updateUI(null);
                             }
-                        });
 
-                Bundle parameters = new Bundle();
-                parameters.putString("fields","id,name,email");
-                theRequest.setParameters(parameters);
-                theRequest.executeAsync();
-
-                Log.d("inloggenskeer","lijn 137");
-                Log.d("inloggenskeer",parameters.toString());
-
-            }
-
-            @Override
-            public void onCancel() {
-                //textview set text "login  canceled"
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-
-            }
-        });
-
-        Log.d("inloggenskeer","we zitten hierlijn 151");
-
-
-
-
-    }
-
-    private void getData(JSONObject object) {
-        try{
-            URL profile_picture = new URL ("https://graph.facebook.com/"+object.getString("id")+"/picture?width=250&height=250");
-
-            Picasso.with(this).load(profile_picture.toString()).into(imageAvatar);
-
-            textViewEmail.setText(object.getString("email"));
-
-
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+                            // [START_EXCLUDE]
+                            //hideProgressDialog();
+                            // [END_EXCLUDE]
+                        }
+                    });
         }
+        // [END auth_with_facebook]
 
+    public void signOut() {
+        mAuth.signOut();
+        LoginManager.getInstance().logOut();
+
+        updateUI(null);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode,data);
-        super.onActivityResult(requestCode, resultCode, data);
+    private void updateUI(FirebaseUser user) {
+        //hideProgressDialog();
+        if (user != null) {
+            //emailTextView.setText(getString("umoeder", user.getDisplayName()));
+            //paswoordTextView.setText(getString("umoderde2e", user.getUid()));
+
+            //findViewById(R.id.buttonFacebookLogin).setVisibility(View.GONE);
+            //findViewById(R.id.buttonFacebookSignout).setVisibility(View.VISIBLE);
+        } else {
+            emailTextView.setText("je bent uitgelogd");
+            paswoordTextView.setText(null);
+
+            //findViewById(R.id.buttonFacebookLogin).setVisibility(View.VISIBLE);
+            //findViewById(R.id.buttonFacebookSignout).setVisibility(View.GONE);
+        }
     }
+
+
+
 }
