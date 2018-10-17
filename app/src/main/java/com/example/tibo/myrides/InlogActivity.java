@@ -3,6 +3,7 @@ package com.example.tibo.myrides;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.UserActivities.HomeActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -70,10 +72,31 @@ public class InlogActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+
+                                    Log.d("LOGINDEBUG","login successful, onComplete hier");
+
                                     // Sign in success, update UI with the signed-in user's information
-                                    Log.d("firebaseloginattempt", "signInWithEmail:success");
+                                    Log.d("LOGINDEBUG", "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    Log.d("LOGINDEBUG",user.toString());
+                                    Log.d("LOGINDEBUG","updateUIAfterLogin enter");
                                     updateUIAfterLogin(user);
+                                    Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
+
+                                    // @TODO: ga naar ingelogde pagina
+                                    //wacht 3 seconden
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //wat er moet gebeuren na 5 seconden
+                                            Log.d("LOGINDEBUG","3 seconden gewacht!");
+
+                                            //naar homeActivity
+                                            startActivity(new Intent(InlogActivity.this, HomeActivity.class));
+
+                                        }
+                                    }, 1500);
+
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w("firebaseloginattempt", "signInWithEmail:failure", task.getException());
