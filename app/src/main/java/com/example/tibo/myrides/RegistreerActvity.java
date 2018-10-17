@@ -11,10 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +27,8 @@ public class RegistreerActvity extends AppCompatActivity {
     private EditText usernameText;
     private EditText paswoordText;
     private EditText bevestigPaswoordText;
+
+    private TextView paswoordLengteView;
 
     private Button registreerButton;
 
@@ -46,8 +50,11 @@ public class RegistreerActvity extends AppCompatActivity {
         paswoordText = (EditText) findViewById(R.id.paswoordEditView);
         bevestigPaswoordText= (EditText) findViewById(R.id.confirmPaswoordEditView);
 
+        paswoordLengteView=findViewById(R.id.counterpaslength);
+
         // init button
         registreerButton = (Button) findViewById(R.id.registreerButton);
+
 
 
         //init images
@@ -55,18 +62,15 @@ public class RegistreerActvity extends AppCompatActivity {
         correcteBevestiging= findViewById(R.id.correctPaswoordConfirmatie);
 
 
+
         registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //LOGICA DIE IETS VERSTUURT NAAR DE DATABANK MOET HIER, MVG
-
-                Log.d("FIREBASE","knop voordat de logica ervan wordt uitgevoerd");
-                Log.d("FIREBASE",usernameText.getText().toString());
                 createAccount(usernameText.getText().toString(), paswoordText.getText().toString());
             }
         });
 
-        bevestigPaswoordText.addTextChangedListener(new TextWatcher() {
+        TextWatcher paswoordIdemControler=new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -74,14 +78,19 @@ public class RegistreerActvity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //correct
                 if(bevestigPaswoordText.getText().toString().equals(paswoordText.getText().toString())){
                     warningBevestiging.setVisibility(View.INVISIBLE);
                     correcteBevestiging.setVisibility(View.VISIBLE);
-
+                    if(paswoordText.getText().toString().length()>=6) {
+                        registreerButton.setEnabled(true);
+                    }
                 }
+                //incorrect
                 else{
                     warningBevestiging.setVisibility(View.VISIBLE);
                     correcteBevestiging.setVisibility(View.INVISIBLE);
+                    registreerButton.setEnabled(false);
 
                 }
             }
@@ -90,7 +99,42 @@ public class RegistreerActvity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        };
+        TextWatcher paswoordCounter= new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                paswoordLengteView.setText(String.valueOf(s.length()));
+                if(s.length()>=6){
+                    paswoordLengteView.setTextColor(getResources().getColor(R.color.colorAccent));
+                    if(bevestigPaswoordText.getText().toString().equals(paswoordText.getText().toString())) {
+                        registreerButton.setEnabled(true);
+                    }
+                }
+                else if(s.length()==0){
+                    paswoordLengteView.setTextColor(Color.parseColor("#20FFFFFF"));
+                    registreerButton.setEnabled(false);
+                }
+                else{
+                    paswoordLengteView.setTextColor(Color.RED);
+                    registreerButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        paswoordText.addTextChangedListener(paswoordIdemControler);
+        paswoordText.addTextChangedListener(paswoordCounter);
+
+        bevestigPaswoordText.addTextChangedListener(paswoordIdemControler);
 
     }
 
@@ -120,7 +164,7 @@ public class RegistreerActvity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("FIREBASE", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegistreerActvity.this, "Authentication failed.",
+                            Toast.makeText(RegistreerActvity.this, "Emailadres reeds in gebruik",
                                     Toast.LENGTH_SHORT).show();
                             }
 
