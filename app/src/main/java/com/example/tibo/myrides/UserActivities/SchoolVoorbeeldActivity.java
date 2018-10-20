@@ -1,9 +1,12 @@
 package com.example.tibo.myrides.UserActivities;
 
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.tibo.myrides.R;
@@ -20,6 +23,16 @@ public class SchoolVoorbeeldActivity extends AppCompatActivity {
         setContentView(R.layout.activity_school_voorbeeld);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        //toolbar toevoegen aan de layout
+        Toolbar toolbar = findViewById(R.id.toolbar_schoolvoorbeeld);
+        setSupportActionBar(toolbar);
+
+        //menuknopje toevoegen aan de toolbar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
 
         //item tappen : zet het item op selected,  sluit de zijbar
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -41,5 +54,17 @@ public class SchoolVoorbeeldActivity extends AppCompatActivity {
 
 
 
+    }
+
+    //https://developer.android.com/training/implementing-navigation/nav-drawer#java
+    //logica wanneer op menu knop geduwd wordt dat het sidebarmenu geopend wordt
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
