@@ -20,4 +20,13 @@
         <item name="android:textColorHint">@color/colorText</item>
         <item name="android:textColorHighlight">@color/colorText</item>
     </style>
+
+    <style name="toolbarStyle">
+        <item name="android:textColorPrimary">@color/colorText</item>
+        <item name="android:textColorSecondary">@color/colorText</item>
+        <item name="android:actionMenuTextColor">@color/colorText</item>
+
+        <item name="colorControlNormal">?android:attr/textColorPrimary</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+    </style>
 </resources>

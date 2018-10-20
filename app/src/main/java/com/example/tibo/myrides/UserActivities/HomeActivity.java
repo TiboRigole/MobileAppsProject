@@ -83,6 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt
         Toolbar toolbar = findViewById(R.id.toolbar_HomeActivity);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Hoofdmenu");
 
         //menuknopje toevoegen aan de toolbar
         ActionBar actionBar = getSupportActionBar();

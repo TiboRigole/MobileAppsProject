@@ -11,19 +11,6 @@
     android:background="@drawable/gradient"
     android:fitsSystemWindows="true">
 
-
-    <!--
-            xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient"
-        tools:context=".UserActivities.HomeActivity"
-
-
-    -->
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
@@ -34,8 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
-
+            app:theme="@style/toolbarStyle"/>
+            <!--             android:theme="@style/ThemeOverlay.AppCompat.ActionBar" -->
 
         <Button
             android:id="@+id/logOutButtonOnHomePage"
