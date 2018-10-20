@@ -2,16 +2,21 @@ package com.example.tibo.myrides.UserActivities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.tibo.myrides.MainActivity;
 import com.example.tibo.myrides.R;
-import com.example.tibo.myrides.RegistreerActvity;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +50,9 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseFirestore db;
     //https://firebase.google.com/docs/firestore/quickstart
 
+    //zijkantLayout
+    private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +76,53 @@ public class HomeActivity extends AppCompatActivity {
         //edittexts init
         aantalKmEditText = (EditText) findViewById(R.id.editTextAantalKm);
         betaaldBoolEditText = (EditText) findViewById(R.id.editTextBoolean);
+
+        //zijkantmenu init
+        mDrawerLayout = findViewById(R.id.drawer_layout_home);
+
+        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt
+        Toolbar toolbar = findViewById(R.id.toolbar_HomeActivity);
+        setSupportActionBar(toolbar);
+
+        //menuknopje toevoegen aan de toolbar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        //item tappen : zet het item op selected,  sluit de zijbar
+        NavigationView navigationView = findViewById(R.id.navigationzijkant_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        if(menuItem.getItemId() == R.id.nav_logout){
+                            Log.d("checketupt","tis de justen");
+
+                            //log de user uit
+                            mAuth.signOut();
+
+                            //log uit van facebook
+                            LoginManager.getInstance().logOut();
+
+                            //ga terug naar de mainActivity
+                            startActivity(new Intent(HomeActivity.this, MainActivity.class));
+
+                        }
+
+                        // Add code here to update the UI based on the item selected
+                        // hier komt de logica wat er moet gebeuren eenmaal je op een
+                        // knop in de zijkantmenu duwt
+                        // For example, swap UI fragments here
+
+                        return true;
+                    }
+                });
+
 
         //logout button logica
         logOutButton.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +189,21 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
+
+    //https://developer.android.com/training/implementing-navigation/nav-drawer#java
+    //logica wanneer op menu knop geduwd wordt dat het sidebarmenu geopend wordt
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
     //extra hulpmethodes
     private void logout(FirebaseUser currentUser) {
