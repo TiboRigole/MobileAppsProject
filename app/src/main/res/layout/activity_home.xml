@@ -132,7 +132,11 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:textColor="@color/colorText"
+        android:background="@drawable/gradient"
         app:menu="@menu/menu_zijkant_view"
+        app:itemTextColor="@color/colorText"
+        app:itemIconTint="@color/colorText"
         app:headerLayout="@layout/navigationzijkant_header">
 
     </android.support.design.widget.NavigationView>
