@@ -38,6 +38,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
     </android.support.constraint.ConstraintLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
@@ -48,6 +49,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:menu="@menu/drawer_view_schoolvoorbeeld"
-        app:headerLayout="@layout/nav_header_schoolvoorbeeld" />
+        app:headerLayout="@layout/nav_header_schoolvoorbeeld">
+
+
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
