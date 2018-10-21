@@ -115,6 +115,10 @@ public class HomeActivity extends AppCompatActivity {
 
                         }
 
+                        if(menuItem.getItemId()==R.id.nav_add_drive){
+                            startActivity(new Intent(HomeActivity.this, AddDriveActivity.class));
+                        }
+
                         // Add code here to update the UI based on the item selected
                         // hier komt de logica wat er moet gebeuren eenmaal je op een
                         // knop in de zijkantmenu duwt
