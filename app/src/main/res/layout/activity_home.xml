@@ -22,93 +22,85 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:theme="@style/toolbarStyle"/>
-            <!--             android:theme="@style/ThemeOverlay.AppCompat.ActionBar" -->
-
-        <Button
-            android:id="@+id/logOutButtonOnHomePage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:text="log out"
-            android:theme="@style/buttonStyle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/zendDBButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="zend"
-            android:theme="@style/buttonStyle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="21dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:text="aantalKm3"
-            android:textColor="@color/colorText"
-            app:layout_constraintEnd_toStartOf="@+id/editTextAantalKm"
-            app:layout_constraintTop_toTopOf="@+id/editTextAantalKm" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="betaald, \ntrue of false"
-            android:textColor="@color/colorText"
-            app:layout_constraintEnd_toStartOf="@+id/editTextBoolean"
-            app:layout_constraintTop_toTopOf="@+id/editTextBoolean" />
-
-        <EditText
-            android:id="@+id/editTextAantalKm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="44dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:ems="10"
-            android:inputType="numberDecimal"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="@color/colorText"
-            app:layout_constraintTop_toBottomOf="@+id/logOutButtonOnHomePage" />
-
-        <EditText
-            android:id="@+id/editTextBoolean"
-            android:layout_width="215dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="228dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:ems="10"
-            android:inputType="number"
+            android:layout_marginEnd="8dp"
+            android:text="Mijn Auto's"
             android:textColor="@color/colorText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_HomeActivity" />
 
-        <Button
-            android:id="@+id/buttonschoolvoorbeeld"
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="224dp"
+            android:layout_height="75dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+            <LinearLayout
+                android:id="@+id/myCarsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/loader_myCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </LinearLayout>
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="schoolvoorbeeldpage"
-            android:theme="@style/buttonStyle"
-            app:layout_constraintBottom_toTopOf="@+id/zendDBButton"
+            android:text="Gedeelde Auto's"
+            android:textColor="@color/colorText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
+
+        <ScrollView
+            android:layout_width="218dp"
+            android:layout_height="103dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+            <LinearLayout
+                android:id="@+id/sharedCarsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/loader_sharedCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </LinearLayout>
+        </ScrollView>
+        <!--             android:theme="@style/ThemeOverlay.AppCompat.ActionBar" -->
 
     </android.support.constraint.ConstraintLayout>
 

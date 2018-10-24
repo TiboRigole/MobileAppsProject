@@ -17,7 +17,8 @@
     <style name="MyEditTextTheme">
         <!-- Used for the bottom line when not selected / focused -->
         <item name="colorControlNormal">@color/colorText</item>
-        <item name="android:textColorHint">@color/colorText</item>
+        <item name="android:textColorHint">@color/colorTextHint</item>
+
         <item name="android:textColorHighlight">@color/colorText</item>
     </style>
 

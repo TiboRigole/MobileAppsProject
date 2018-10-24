@@ -4,11 +4,15 @@
         <item
             android:id="@+id/nav_info"
             android:icon="@drawable/ic_info_button"
-            android:title="Info"/>
+            android:title="Account"/>
         <item
             android:id="@+id/nav_add_drive"
             android:icon="@drawable/ic_plus"
             android:title="Add Drive"/>
+        <item
+            android:id="@+id/nav_add_car"
+            android:icon="@drawable/ic_plus"
+            android:title="Add Car"/>
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"

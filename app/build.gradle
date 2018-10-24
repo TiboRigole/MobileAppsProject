@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.tibo.myrides"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -57,4 +57,5 @@ dependencies {
     // api requests
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
+    implementation files('lib/api-common-1.7.0.jar')
 }

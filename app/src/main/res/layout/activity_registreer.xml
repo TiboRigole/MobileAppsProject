@@ -23,10 +23,10 @@
     <EditText
         android:id="@+id/emailEditView"
         android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="68dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
@@ -35,9 +35,9 @@
         android:textColor="@color/colorText"
         android:theme="@style/MyEditTextTheme"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/usernameEditView" />
 
     <EditText
         android:id="@+id/paswoordEditView"
@@ -124,5 +124,23 @@
         android:textColor="#20FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/paswoordEditView"
         app:layout_constraintEnd_toEndOf="@+id/paswoordEditView" />
+
+    <EditText
+        android:id="@+id/usernameEditView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="104dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:hint="Username"
+        android:textColor="@color/colorText"
+        android:theme="@style/MyEditTextTheme"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

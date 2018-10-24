@@ -14,19 +14,40 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.gms.tasks.OnCompleteListener;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseError;
+
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
 public class RegistreerActvity extends AppCompatActivity {
 
 
-    private EditText usernameText;
+    private EditText emailText;
     private EditText paswoordText;
     private EditText bevestigPaswoordText;
+    private EditText usernameText;
+
 
     private TextView paswoordLengteView;
 
@@ -36,6 +57,11 @@ public class RegistreerActvity extends AppCompatActivity {
     private ImageView correcteBevestiging;
 
     private FirebaseAuth mAuth;
+
+    //firebase database handler
+    FirebaseFirestore db;
+    //https://firebase.google.com/docs/firestore/quickstart
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,9 +72,10 @@ public class RegistreerActvity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
 
         //teksveldjes init
-        usernameText = (EditText) findViewById(R.id.emailEditView);
+        emailText = (EditText) findViewById(R.id.emailEditView);
         paswoordText = (EditText) findViewById(R.id.paswoordEditView);
         bevestigPaswoordText= (EditText) findViewById(R.id.confirmPaswoordEditView);
+        usernameText= findViewById(R.id.usernameEditView);
 
         paswoordLengteView=findViewById(R.id.counterpaslength);
 
@@ -56,6 +83,13 @@ public class RegistreerActvity extends AppCompatActivity {
         registreerButton = (Button) findViewById(R.id.registreerButton);
 
 
+        // firebase database
+        db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
+        //https://firebase.google.com/docs/firestore/quickstart
 
         //init images
         warningBevestiging= findViewById(R.id.warningPaswoordConfirmatie);
@@ -66,7 +100,31 @@ public class RegistreerActvity extends AppCompatActivity {
         registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAccount(usernameText.getText().toString(), paswoordText.getText().toString());
+                System.out.println("registreerknop wordt ingeduwd");
+                String username= usernameText.getText().toString();
+                Task<QuerySnapshot> query= db.collection("users").whereEqualTo("displayName", username).get();
+
+                query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.getDocuments().isEmpty()){
+                            // Username is beschikbaar
+                            createAccount(username, emailText.getText().toString(), paswoordText.getText().toString());
+
+                        }
+                        else{
+                            Toast.makeText(RegistreerActvity.this, "Username reeds in gebruik",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                query.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
             }
         });
 
@@ -151,8 +209,10 @@ public class RegistreerActvity extends AppCompatActivity {
         }
     }
 
-    public void createAccount(String email, String password){
+    public void createAccount(String username, String email, String password){
         mAuth.createUserWithEmailAndPassword(email, password)
+
+
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -160,7 +220,37 @@ public class RegistreerActvity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("FIREBASE", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(RegistreerActvity.this, user.toString(), Toast.LENGTH_SHORT).show();
+
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(username)
+                                    .setPhotoUri(null)
+                                    .build();
+                            Task updateProfile= user.updateProfile(profileUpdates);
+                            updateProfile.addOnSuccessListener(new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(Object o) {
+                                    Toast.makeText(RegistreerActvity.this, user.getDisplayName()+ "u bent geregistreerd", Toast.LENGTH_SHORT).show();
+
+
+                                    //voeg document toe met een gegenereerde ID
+                                    db.collection("users")
+                                            .add(user)
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    Log.d("VALUES","DocumentSnapchat added with ID: "+ documentReference.getId());
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.d("VALUES", "Error adding document: "+ e);
+                                                }
+                                            });
+                                }
+                            });
+
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("FIREBASE", "createUserWithEmail:failure", task.getException());

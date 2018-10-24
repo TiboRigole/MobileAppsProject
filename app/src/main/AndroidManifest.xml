@@ -13,12 +13,10 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-
-        android:value="@string/facebook_app_id" />
+            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI" />
-
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -51,10 +49,10 @@
 
         <activity android:name=".RegistreerActvity" />
         <activity android:name=".UserActivities.HomeActivity" />
-        <activity android:name=".UserActivities.SchoolVoorbeeldActivity"/>
-        <activity android:name=".UserActivities.AddDriveActivity"/>
-        <activity android:name=".UserActivities.SummaryActivity"/>
-        <activity android:name=".UserActivities.MapsRouteActivity"/>
+        <activity android:name=".UserActivities.AddDriveActivity" />
+        <activity android:name=".UserActivities.SummaryActivity" />
+        <activity android:name=".UserActivities.MapsRouteActivity" />
+        <activity android:name=".UserActivities.AddCarActivity"/>
     </application>
 
 </manifest>

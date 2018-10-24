@@ -14,16 +14,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tibo.myrides.MainActivity;
 import com.example.tibo.myrides.R;
+import com.example.tibo.myrides.RegistreerActvity;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,16 +38,11 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
 
-    //variable reservation
+    // lists met auto's
+    LinearLayout myCarsLayout;
+    LinearLayout sharedCarsLayout;
 
-    //buttons
-    private Button logOutButton;
-    private Button zendButton;
-    private Button naarSchoolVbButton;
 
-    //editTexts
-    private EditText aantalKmEditText;
-    private EditText betaaldBoolEditText;
 
     //firebase authentication handler
     private FirebaseAuth mAuth;
@@ -65,22 +67,16 @@ public class HomeActivity extends AppCompatActivity {
 
         //firebase database init
         db = FirebaseFirestore.getInstance();
-        //https://firebase.google.com/docs/firestore/quickstart
 
 
-        //buttons init
-        logOutButton =(Button) findViewById(R.id.logOutButtonOnHomePage);
-        zendButton = (Button) findViewById(R.id.zendDBButton);
-        naarSchoolVbButton = (Button) findViewById(R.id.buttonschoolvoorbeeld);
+        myCarsLayout=findViewById(R.id.myCarsList);
+        sharedCarsLayout=findViewById(R.id.sharedCarsList);
 
-        //edittexts init
-        aantalKmEditText = (EditText) findViewById(R.id.editTextAantalKm);
-        betaaldBoolEditText = (EditText) findViewById(R.id.editTextBoolean);
 
         //zijkantmenu init
         mDrawerLayout = findViewById(R.id.drawer_layout_home);
 
-        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt
+        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt)
         Toolbar toolbar = findViewById(R.id.toolbar_HomeActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Hoofdmenu");
@@ -119,6 +115,10 @@ public class HomeActivity extends AppCompatActivity {
                             startActivity(new Intent(HomeActivity.this, AddDriveActivity.class));
                         }
 
+                        if(menuItem.getItemId()==R.id.nav_add_car){
+                            startActivity(new Intent(HomeActivity.this, AddCarActivity.class));
+                        }
+
                         // Add code here to update the UI based on the item selected
                         // hier komt de logica wat er moet gebeuren eenmaal je op een
                         // knop in de zijkantmenu duwt
@@ -129,68 +129,31 @@ public class HomeActivity extends AppCompatActivity {
                 });
 
 
-        //logout button logica
-        logOutButton.setOnClickListener(new View.OnClickListener() {
+        // vul lijst met mijn auto's en gedeelde auto's
+        Task<QuerySnapshot> query= db.collection("autos").whereEqualTo("eigenaar", currentUser.getEmail()).get();
+
+        query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onClick(View view) {
-
-                //log de user uit
-                logout(currentUser);
-
-                //log uit van facebook
-                LoginManager.getInstance().logOut();
-
-                //ga terug naar de mainActivity
-                startActivity(new Intent(HomeActivity.this, MainActivity.class));
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                findViewById(R.id.loader_myCar).setVisibility(View.GONE);
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                    TextView kentekenTextView= new TextView(getApplicationContext());
+                    kentekenTextView.setTextColor(getColor(R.color.colorText));
+                    kentekenTextView.setText(documentSnapshot.get("kenteken").toString());
+                    myCarsLayout.addView(kentekenTextView);
+                }
+            }
+        });
+        query.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
             }
         });
 
-        //zend Button logica
-        zendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int aantalKm = Integer.parseInt(aantalKmEditText.getText().toString());
-                int betaaldInt = Integer.parseInt(betaaldBoolEditText.getText().toString());
-                boolean betaald = false;
-                if(betaaldInt == 1){betaald = true;}
 
-                Log.d("VALUES","aantalKm:"+aantalKm);
-                Log.d("VALUES","betaald:"+betaald);
+        // @TODO: vul lijst met shared auto's aan
 
-                //verwerken en versturen?
-
-                //creeer een nieuwe User met een first en last name
-                Map<String, Object> user = new HashMap<>();
-                user.put("first","Ada");
-                user.put("last","Lovelace");
-                user.put("born",1815);
-
-                //voeg document toe met een gegenereerde ID
-                db.collection("users")
-                        .add(user)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("VALUES","DocumentSnapchat added with ID: "+ documentReference.getId());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d("VALUES", "Error adding document: "+ e);
-                            }
-                        });
-
-            }
-        });
-
-        //schoolvoorbeeld Button logica
-        naarSchoolVbButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, SchoolVoorbeeldActivity.class));
-            }
-        });
 
 
     }
@@ -210,8 +173,5 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    //extra hulpmethodes
-    private void logout(FirebaseUser currentUser) {
-        mAuth.signOut();
-    }
+
 }

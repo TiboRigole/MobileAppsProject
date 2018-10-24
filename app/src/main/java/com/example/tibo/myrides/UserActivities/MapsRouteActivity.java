@@ -116,7 +116,7 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                     intent.putExtra("destLatLng", destLatLng);
 
                     // @TODO: route meegeven naar volgende activity
-                   // intent.putExtra("points", new Gson().toJson(polyline.getPoints()));
+
                     startActivity(intent);
                 }
                 else {
