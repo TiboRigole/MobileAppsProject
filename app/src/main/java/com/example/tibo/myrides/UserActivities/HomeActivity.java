@@ -152,8 +152,20 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        // @TODO: vul lijst met shared auto's aan
 
+        Task<QuerySnapshot> querySharedCars= db.collection("autos").whereArrayContains("sharedWithUsers", currentUser.getEmail()).get();
+        querySharedCars.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                findViewById(R.id.loader_sharedCar).setVisibility(View.GONE);
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                    TextView kentekenTextView= new TextView(getApplicationContext());
+                    kentekenTextView.setTextColor(getColor(R.color.colorText));
+                    kentekenTextView.setText(documentSnapshot.get("kenteken").toString());
+                    sharedCarsLayout.addView(kentekenTextView);
+                }
+            }
+        });
 
 
     }

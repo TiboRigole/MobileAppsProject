@@ -22,25 +22,9 @@ import org.json.JSONObject;
 import com.example.tibo.myrides.PlaceAutocompleteAdapter;
 
 public class AddDriveActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private JSONObject jsonObject;
-    boolean heenenterug;
-    boolean computed=false;
-
-
 
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40, -168), new LatLng(71, 136));
-
-
-
-
-    int meter;
-    double kilometer;
-    double verbruik; // liter per km
-    double prijsNafte; // €/l
-    double resultaat;
-    String einde;
-    String start;
 
 
     AutoCompleteTextView source;
@@ -95,12 +79,6 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
 
 
     }
-
-
-
-
-
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
