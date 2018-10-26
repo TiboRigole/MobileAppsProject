@@ -3,38 +3,40 @@ package com.example.tibo.myrides.UserActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tibo.myrides.Entities.Rit;
 import com.example.tibo.myrides.R;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SummaryActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -65,6 +67,14 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     TextView nummerPlaatTextView;
 
 
+    //firebase authentication handler
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+
+    //firebase database handler
+    FirebaseFirestore db;
+
+
    // protected static CustomSharedPreference mPref;
     DecimalFormat df = new DecimalFormat("#.##");
 
@@ -73,6 +83,12 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        //firebase database init
+        db = FirebaseFirestore.getInstance();
+
         Bundle bundle= getIntent().getExtras();
         start= bundle.getString("vertrek");
         einde= bundle.getString("aankomst");
@@ -116,7 +132,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
                 try {
 
                     heenenterug=retour.isChecked();
-                    saveStripedJsonObject(start, einde, kilometer, prijsNafte, resultaat, heenenterug);
+                    saveRitInDB(start, einde, kilometer, prijsNafte, resultaat, heenenterug);
                     Intent intent= new Intent(SummaryActivity.this, HomeActivity.class);
                     startActivity(intent);
                 } catch (JSONException e) {
@@ -195,28 +211,51 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
 
-    private void saveStripedJsonObject(String start, String einde, double kilometer, double prijsNafte, double resultaat, boolean heenenterug) throws JSONException {
-        // @TODO: opslaan bij huidige gebruiker in firebase
-
-        JSONObject saveObject= new JSONObject();
-
+    private void saveRitInDB(String start, String einde, double kilometer, double prijsNafte, double resultaat, boolean heenenterug) throws JSONException {
 
         if(heenenterug){
             kilometer=kilometer*2;
             resultaat=resultaat*2;
         }
+        Task<QuerySnapshot> query= db.collection("autos").whereEqualTo("kenteken", nummerPlaatTextView.getText().toString()).get();
+        double finalResultaat = resultaat;
+        double finalKilometer = kilometer;
+        query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
 
-        saveObject.put("vertrekpunt", start);
-        saveObject.put("bestemming", einde);
-        saveObject.put("afstand", kilometer);
-        saveObject.put("prijsnafte", prijsNafte);
-        saveObject.put("resultaatInEuro", resultaat);
-        saveObject.put("heenenterug", heenenterug);
+                    String eigenaarAuto=documentSnapshot.get("eigenaar").toString();
+                    Rit rit= new Rit(currentUser.getEmail(),eigenaarAuto, start, einde, nummerPlaatTextView.getText().toString(), finalKilometer, prijsNafte, finalResultaat, heenenterug);
 
-        //mPref=((CustomApplication)getApplication()).getShared();
+                    db.collection("ritten")
+                            .add(rit)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Log.d("VALUES","DocumentSnapchat added with ID: "+ documentReference.getId());
+
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d("VALUES", "Error adding document: "+ e);
+                                }
+                            });
 
 
-        //mPref.addRittenData(saveObject);
+                }
+            }
+        });
+        query.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+
 
 
     }
