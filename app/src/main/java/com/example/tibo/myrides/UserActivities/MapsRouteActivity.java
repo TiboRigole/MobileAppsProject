@@ -57,6 +57,9 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
     String source;
     String destination;
 
+    String nummerplaat;
+
+
     Handler mainHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,8 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+        nummerplaat= getIntent().getExtras().getString("autoKenteken");
 
     }
 
@@ -114,6 +119,7 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                     intent.putExtra("center",center);
                     intent.putExtra("sourceLatLng", sourceLatLng);
                     intent.putExtra("destLatLng", destLatLng);
+                    intent.putExtra("nummerplaat", nummerplaat);
 
                     // @TODO: route meegeven naar volgende activity
 

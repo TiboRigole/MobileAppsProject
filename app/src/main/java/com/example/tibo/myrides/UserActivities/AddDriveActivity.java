@@ -36,18 +36,15 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40, -168), new LatLng(71, 136));
 
-
     //firebase authentication handler
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-
-
     //firebase database handler
     FirebaseFirestore db;
 
+    //keuze auto waarmee gereden wordt voor deze rit
     LinearLayout autosLijst;
-
     TextView selectedCar;
 
     AutoCompleteTextView source;
@@ -71,8 +68,8 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         db = FirebaseFirestore.getInstance();
 
 
-        source = (AutoCompleteTextView) findViewById(R.id.source);
-        destination = (AutoCompleteTextView) findViewById(R.id.destination);
+        source = findViewById(R.id.source);
+        destination = findViewById(R.id.destination);
 
         autosLijst =findViewById(R.id.autosList);
         selectedCar=findViewById(R.id.selectedCar);
@@ -93,18 +90,19 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Rit toevoegen");
 
-        CheckBox retour = (CheckBox) findViewById(R.id.retour);
+
 
         Button routes = (Button) findViewById(R.id.routes);
         routes.setOnClickListener((v) -> {
-            System.out.println("source tekst" + source.getText().toString());
-            if (!source.getText().toString().equals("") || !destination.getText().toString().equals("")) {
+            System.out.println("source tekst " + source.getText().toString());
+            if (!source.getText().toString().equals("") && !destination.getText().toString().equals("") && !selectedCar.getText().toString().equals("Selecteer Auto")) {
                 Intent intent = new Intent(AddDriveActivity.this, MapsRouteActivity.class);
                 intent.putExtra("vertrek", source.getText().toString());
                 intent.putExtra("aankomst", destination.getText().toString());
+                intent.putExtra("autoKenteken", selectedCar.getText().toString());
                 startActivity(intent);
             } else {
-                Toast toast = Toast.makeText(getApplicationContext(), "vul adressen in", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), "vul adressen in of selecteer auto", Toast.LENGTH_LONG);
                 toast.show();
             }
         });

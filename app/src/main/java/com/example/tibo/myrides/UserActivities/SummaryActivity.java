@@ -62,6 +62,8 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     TextView destination;
 
 
+    TextView nummerPlaatTextView;
+
 
    // protected static CustomSharedPreference mPref;
     DecimalFormat df = new DecimalFormat("#.##");
@@ -80,6 +82,10 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
 
         source= (TextView) findViewById(R.id.source);
         destination= (TextView) findViewById(R.id.destination);
+
+        nummerPlaatTextView=findViewById(R.id.nummerPlaat);
+        nummerPlaatTextView.setTextSize(20);
+        nummerPlaatTextView.setText(bundle.getString("nummerplaat"));
 
         source.setText(start);
         destination.setText(einde);

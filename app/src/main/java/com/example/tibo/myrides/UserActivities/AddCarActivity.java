@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.tibo.myrides.Entities.Car;
 import com.example.tibo.myrides.R;
@@ -33,6 +34,7 @@ public class AddCarActivity extends AppCompatActivity {
     Button addSharedUser;
 
     LinearLayout sharedUsersList;
+
 
     EditText verbruikEditView;
     EditText merkEditView;
@@ -62,6 +64,8 @@ public class AddCarActivity extends AppCompatActivity {
 
         addCar=findViewById(R.id.addCarButton);
         addSharedUser=findViewById(R.id.addUserButton);
+
+
 
         sharedUsersList=findViewById(R.id.listSharedUsers);
 
