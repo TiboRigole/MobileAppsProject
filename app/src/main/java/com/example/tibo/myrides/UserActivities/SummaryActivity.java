@@ -44,8 +44,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -70,6 +73,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     String einde;
     String start;
     String nummerplaat;
+    Polyline polyline;
 
     TextView source;
     TextView destination;
@@ -252,7 +256,9 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
                 for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
 
                     String eigenaarAuto=documentSnapshot.get("eigenaar").toString();
-                    Rit rit= new Rit(currentUser.getEmail(),eigenaarAuto, start, einde, nummerPlaatTextView.getText().toString(), finalKilometer, prijsNafte, finalResultaat, heenenterug);
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                    Date date = new Date();
+                    Rit rit= new Rit(dateFormat.format(date), currentUser.getEmail(),eigenaarAuto, start, einde, nummerPlaatTextView.getText().toString(), finalKilometer, prijsNafte, finalResultaat, heenenterug);
 
                     db.collection("ritten")
                             .add(rit)
@@ -297,13 +303,14 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         List<PatternItem> pattern = Arrays.<PatternItem>asList(
                 new Dot(), new Gap(20), new Dash(30), new Gap(20));
         Random rnd= new Random();
+        polyline=PassPolyline.polyline;
         gmap.addPolyline(new PolylineOptions()
                 .addAll(PassPolyline.polyline.getPoints())
                 .color(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)))
                 .width(15)
                 .pattern(pattern)
         );
-        PassPolyline.polyline=null;
+
         gmap.moveCamera(CameraUpdateFactory.newLatLng(center));
 
 

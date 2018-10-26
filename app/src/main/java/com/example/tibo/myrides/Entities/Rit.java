@@ -1,5 +1,10 @@
 package com.example.tibo.myrides.Entities;
 
+import com.google.android.gms.maps.model.Polyline;
+
+import java.util.Date;
+import java.util.Map;
+
 public class Rit {
 
     String vertrekpunt;
@@ -12,9 +17,12 @@ public class Rit {
     String uitvoerder;
     String eigenaarAuto;
 
-    public Rit(String uitvoerder, String eigenaarAuto, String vertrekpunt, String bestemming, String nummerplaat, Double afstand, Double prijsNafte, Double totalePrijs, boolean heenenterug) {
-        this.uitvoerder=uitvoerder;
-        this.eigenaarAuto= eigenaarAuto;
+    String date;
+
+    public Rit(String date, String uitvoerder, String eigenaarAuto, String vertrekpunt, String bestemming, String nummerplaat, Double afstand, Double prijsNafte, Double totalePrijs, boolean heenenterug) {
+        this.date = date;
+        this.uitvoerder = uitvoerder;
+        this.eigenaarAuto = eigenaarAuto;
         this.vertrekpunt = vertrekpunt;
         this.bestemming = bestemming;
         this.nummerplaat = nummerplaat;
@@ -23,6 +31,45 @@ public class Rit {
         this.totalePrijs = totalePrijs;
         this.heenenterug = heenenterug;
     }
+
+    public Rit(Map<String,Object> data) {
+        this.date = (String) data.get("date");
+        this.uitvoerder = (String) data.get("uitvoerder");
+        this.eigenaarAuto = (String) data.get("eigenaarAuto");
+        this.vertrekpunt = (String) data.get("vertrekpunt");
+        this.bestemming = (String) data.get("bestemming");
+        this.nummerplaat = (String) data.get("nummerplaat");
+        this.afstand = (double) data.get("afstand");
+        this.prijsNafte = (double) data.get("prijsNafte");
+        this.totalePrijs = (double) data.get("totalePrijs");
+        this.heenenterug = (boolean) data.get("heenenterug");
+
+    }
+
+    @Override
+    public String toString() {
+        return "Rit{" +'\n'+
+                "vertrekpunt='" + vertrekpunt + '\'' + '\n'+
+                ", bestemming='" + bestemming + '\'' +'\n'+
+                ", nummerplaat='" + nummerplaat + '\'' +'\n'+
+                ", afstand=" + afstand +"km"+'\n'+
+                ", prijsNafte=" + prijsNafte +"€/l"+'\n'+
+                ", totalePrijs=" + totalePrijs +"€"+'\n'+
+                ", heenenterug=" + heenenterug +'\n'+
+                ", uitvoerder='" + uitvoerder + '\'' +'\n'+
+                ", eigenaarAuto='" + eigenaarAuto + '\'' +'\n'+
+                ", date='" + date + '\'' +'\n'+
+                '}';
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
 
     public String getEigenaarAuto() {
         return eigenaarAuto;

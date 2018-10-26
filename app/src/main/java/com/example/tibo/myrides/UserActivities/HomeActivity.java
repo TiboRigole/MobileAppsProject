@@ -12,28 +12,20 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tibo.myrides.MainActivity;
 import com.example.tibo.myrides.R;
-import com.example.tibo.myrides.RegistreerActvity;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -117,6 +109,14 @@ public class HomeActivity extends AppCompatActivity {
 
                         if(menuItem.getItemId()==R.id.nav_add_car){
                             startActivity(new Intent(HomeActivity.this, AddCarActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_other_drives){
+                            startActivity(new Intent(HomeActivity.this, OtherDrivesActivity.class ));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_my_drives){
+                            startActivity(new Intent(HomeActivity.this, MyDrivesActivity.class));
                         }
 
                         // Add code here to update the UI based on the item selected

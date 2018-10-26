@@ -52,7 +52,9 @@
         <activity android:name=".UserActivities.AddDriveActivity" />
         <activity android:name=".UserActivities.SummaryActivity" />
         <activity android:name=".UserActivities.MapsRouteActivity" />
-        <activity android:name=".UserActivities.AddCarActivity"/>
+        <activity android:name=".UserActivities.AddCarActivity" />
+        <activity android:name=".UserActivities.MyDrivesActivity" />
+        <activity android:name=".UserActivities.OtherDrivesActivity"></activity>
     </application>
 
 </manifest>
