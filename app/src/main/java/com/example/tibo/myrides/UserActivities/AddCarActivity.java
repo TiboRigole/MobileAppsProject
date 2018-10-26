@@ -54,11 +54,6 @@ public class AddCarActivity extends AppCompatActivity {
 
         // firebase database
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
-
 
         //firebase authentication init
         mAuth = FirebaseAuth.getInstance();
