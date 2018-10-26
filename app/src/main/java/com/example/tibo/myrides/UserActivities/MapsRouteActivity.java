@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.Models.PassPolyline;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -121,7 +122,8 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                     intent.putExtra("destLatLng", destLatLng);
                     intent.putExtra("nummerplaat", nummerplaat);
 
-                    // @TODO: route meegeven naar volgende activity
+
+                    PassPolyline.polyline=polyline;
 
                     startActivity(intent);
                 }

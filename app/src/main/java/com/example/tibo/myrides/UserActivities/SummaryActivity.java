@@ -2,6 +2,7 @@ package com.example.tibo.myrides.UserActivities;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.Rit;
+import com.example.tibo.myrides.Models.PassPolyline;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,8 +23,14 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -37,6 +45,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.json.JSONException;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class SummaryActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -58,7 +69,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     double resultaat;
     String einde;
     String start;
-
+    String nummerplaat;
 
     TextView source;
     TextView destination;
@@ -98,10 +109,10 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
 
         source= (TextView) findViewById(R.id.source);
         destination= (TextView) findViewById(R.id.destination);
-
+        nummerplaat=bundle.getString("nummerplaat");
         nummerPlaatTextView=findViewById(R.id.nummerPlaat);
         nummerPlaatTextView.setTextSize(20);
-        nummerPlaatTextView.setText(bundle.getString("nummerplaat"));
+        nummerPlaatTextView.setText(nummerplaat);
 
         source.setText(start);
         destination.setText(einde);
@@ -173,18 +184,33 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         // kilometer uit vorige activity
         kilometer= Double.parseDouble(bundle.getString("distance")); // km
 
-        // @TODO: hardcoded values nog handlen per auto
-        verbruik=0.055; // liter per km
-        prijsNafte= 1.45;
-        resultaat= kilometer*verbruik*prijsNafte;
+
+        Task<QuerySnapshot> query= db.collection("autos").whereEqualTo("kenteken", nummerplaat).get();
+        query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                    verbruik=documentSnapshot.getDouble("verbruik");
+
+                    //@TODO prijs nafte uit een api ofzo halen
+                    String typeNafte=documentSnapshot.getString("benzineType");
+                    prijsNafte= 1.45;
+
+                    resultaat= kilometer*verbruik*prijsNafte;
+                    // visualiseren
+                    visualiseerResultaten(kilometer, verbruik, prijsNafte, resultaat);
+                    computed=true;
+                }
+            }
+        });
+        query.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
 
 
-        // visualiseren
-        visualiseerResultaten(kilometer, verbruik, prijsNafte, resultaat);
-
-
-
-        computed=true;
 
     }
 
@@ -267,6 +293,17 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         gmap.setMinZoomPreference(9);
         gmap.addMarker(new MarkerOptions().position(sourceLatLng).title(start).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         gmap.addMarker(new MarkerOptions().position(destLatLng).title(einde).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+        List<PatternItem> pattern = Arrays.<PatternItem>asList(
+                new Dot(), new Gap(20), new Dash(30), new Gap(20));
+        Random rnd= new Random();
+        gmap.addPolyline(new PolylineOptions()
+                .addAll(PassPolyline.polyline.getPoints())
+                .color(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)))
+                .width(15)
+                .pattern(pattern)
+        );
+        PassPolyline.polyline=null;
         gmap.moveCamera(CameraUpdateFactory.newLatLng(center));
 
 
