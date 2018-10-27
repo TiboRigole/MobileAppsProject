@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -45,6 +47,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -84,6 +87,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
     Spinner mySpinner;
 
     TextView routeInfo;
+
 
     private static LatLng source;
     private static LatLng dest;
@@ -146,6 +150,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void visualiseerRitten(){
+        //@TODO synchronisatie probleem oplossen, wachten op 2 requests totdat lijn getrokken mag worden, groot probleem, moeilijk op te lossen !!
 
         ArrayList<String> datums= new ArrayList<String>();
         for(Map.Entry<String, List<Rit>> entry : dateBasedRitten.entrySet()) {
@@ -161,100 +166,111 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 gmap.clear();
                 for (Rit rit : dateBasedRitten.get(mySpinner.getSelectedItem().toString())) {
+
                     Random rnd = new Random();
                     int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
 
 
-                    // init coordinates source
-                    StringBuilder sourceURL = new StringBuilder();
-                    sourceURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
-                    sourceURL.append(rit.getVertrekpunt());
-                    sourceURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
-                    Request request = new Request.Builder()
-                            .url(sourceURL.toString())
-                            .get()
-                            .addHeader("cache-control", "no-cache")
-                            .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
-                            .build();
-                    OkHttpClient client = new OkHttpClient();
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Request request, IOException e) {
-                            e.printStackTrace();
-                        }
 
-                        @Override
-                        public void onResponse(Response response) throws IOException {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                double latSource = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
-                                double lngSource = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        source=new LatLng(latSource, lngSource);
-                                        BitmapDescriptor icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-
-                                        gmap.addMarker(new MarkerOptions().position(source).title(rit.getVertrekpunt()).icon(icon));
-                                        if(dest!=null){
-                                            drawPolyline(source, dest, color, rit);
-                                            source=null;
-                                            dest=null;
-                                        }
-                                    }
-                                });
-                                } catch (JSONException e) {
+                        // init coordinates source
+                        StringBuilder sourceURL = new StringBuilder();
+                        sourceURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
+                        sourceURL.append(rit.getVertrekpunt());
+                        sourceURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
+                        Request request = new Request.Builder()
+                                .url(sourceURL.toString())
+                                .get()
+                                .addHeader("cache-control", "no-cache")
+                                .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
+                                .build();
+                        OkHttpClient client = new OkHttpClient();
+                        Call sourceRequest=client.newCall(request);
+                        sourceRequest.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Request request, IOException e) {
                                 e.printStackTrace();
                             }
 
+                            @Override
+                            public void onResponse(Response response) throws IOException {
 
-                        }
-                    });
-
-
-                    // init coordinates destination
-                    StringBuilder destURL = new StringBuilder();
-                    destURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
-                    destURL.append(rit.getBestemming());
-                    destURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
-                    Request destRequest = new Request.Builder()
-                            .url(destURL.toString())
-                            .get()
-                            .addHeader("cache-control", "no-cache")
-                            .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
-                            .build();
-                    client.newCall(destRequest).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Request request, IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(Response response) throws IOException {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                double latDest = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
-                                double lngDest = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dest= new LatLng(latDest, lngDest);
-                                        gmap.addMarker(new MarkerOptions().position(dest).title(rit.getBestemming()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                                        if(source!=null){
-                                            drawPolyline(source, dest, color, rit);
-                                            source=null;
-                                            dest=null;
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response.body().string());
+                                    double latSource = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
+                                    double lngSource = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            source = new LatLng(latSource, lngSource);
+                                            BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                                            gmap.addMarker(new MarkerOptions().position(source).title(rit.getVertrekpunt()).icon(icon));
+                                            if(dest!=null){
+                                                drawPolyline(source, dest, color,rit);
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+
                                 } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        });
+
+
+
+
+                        // init coordinates destination
+                        StringBuilder destURL = new StringBuilder();
+                        destURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
+                        destURL.append(rit.getBestemming());
+                        destURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
+                        Request destRequest = new Request.Builder()
+                                .url(destURL.toString())
+                                .get()
+                                .addHeader("cache-control", "no-cache")
+                                .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
+                                .build();
+                        Call destinationRequest= client.newCall(destRequest);
+                        destinationRequest.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Request request, IOException e) {
                                 e.printStackTrace();
                             }
 
+                            @Override
+                            public void onResponse(Response response) throws IOException {
+                                try {
 
-                        }
-                    });
+                                    JSONObject jsonObject = new JSONObject(response.body().string());
+                                    double latDest = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
+                                    double lngDest = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dest = new LatLng(latDest, lngDest);
+                                            gmap.addMarker(new MarkerOptions().position(dest).title(rit.getBestemming()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                                            if(source!=null){
+                                                drawPolyline(source, dest, color,rit);
+                                            }
+                                        }
+                                    });
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        });
+
+
+
+
+
+
 
 
 
@@ -281,6 +297,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         Polyline polyline = gmap.addPolyline(polyLineOptions);
         polylineRitHashMap.put(polyline, rit);
         polyline.setGeodesic(true);
+
     }
 
 
