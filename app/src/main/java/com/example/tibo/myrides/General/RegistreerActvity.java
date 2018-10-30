@@ -1,4 +1,4 @@
-package com.example.tibo.myrides;
+package com.example.tibo.myrides.General;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -15,13 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.tibo.myrides.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,67 +29,56 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class RegistreerActvity extends AppCompatActivity {
 
-
+    // INIT LAYOUT
     private EditText emailText;
     private EditText paswoordText;
     private EditText bevestigPaswoordText;
     private EditText usernameText;
-
-
     private TextView paswoordLengteView;
-
     private Button registreerButton;
-
     private ImageView warningBevestiging;
     private ImageView correcteBevestiging;
 
-    private FirebaseAuth mAuth;
 
-    //firebase database handler
+    // INIT FIREBASE
+    private FirebaseAuth mAuth;
     FirebaseFirestore db;
-    //https://firebase.google.com/docs/firestore/quickstart
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registreer);
 
-        // FIREBASE INIT
+
+
+        // DEF FIREBASE
         mAuth=FirebaseAuth.getInstance();
-
-        //teksveldjes init
-        emailText = (EditText) findViewById(R.id.emailEditView);
-        paswoordText = (EditText) findViewById(R.id.paswoordEditView);
-        bevestigPaswoordText= (EditText) findViewById(R.id.confirmPaswoordEditView);
-        usernameText= findViewById(R.id.usernameEditView);
-
-        paswoordLengteView=findViewById(R.id.counterpaslength);
-
-        // init button
-        registreerButton = (Button) findViewById(R.id.registreerButton);
-
-
-        // firebase database
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setTimestampsInSnapshotsEnabled(true)
                 .build();
         db.setFirestoreSettings(settings);
-        //https://firebase.google.com/docs/firestore/quickstart
+
+
+
+        // DEF LAYOUT
+        emailText = (EditText) findViewById(R.id.emailEditView);
+        paswoordText = (EditText) findViewById(R.id.paswoordEditView);
+        bevestigPaswoordText= (EditText) findViewById(R.id.confirmPaswoordEditView);
+        usernameText= findViewById(R.id.usernameEditView);
+        paswoordLengteView=findViewById(R.id.counterpaslength);
+        registreerButton = (Button) findViewById(R.id.registreerButton);
+
+
+
 
         //init images
         warningBevestiging= findViewById(R.id.warningPaswoordConfirmatie);
@@ -97,13 +86,14 @@ public class RegistreerActvity extends AppCompatActivity {
 
 
 
+        // LOGIC BUTTONS AND WIDGETS
         registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("registreerknop wordt ingeduwd");
                 String username= usernameText.getText().toString();
-                Task<QuerySnapshot> query= db.collection("users").whereEqualTo("displayName", username).get();
 
+                // enkel gebruiker toevoegen als displayname niet in gebruik is
+                Task<QuerySnapshot> query= db.collection("users").whereEqualTo("displayName", username).get();
                 query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -128,6 +118,7 @@ public class RegistreerActvity extends AppCompatActivity {
             }
         });
 
+        // controle van paswoord bij editview
         TextWatcher paswoordIdemControler=new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -188,10 +179,8 @@ public class RegistreerActvity extends AppCompatActivity {
 
             }
         };
-
         paswoordText.addTextChangedListener(paswoordIdemControler);
         paswoordText.addTextChangedListener(paswoordCounter);
-
         bevestigPaswoordText.addTextChangedListener(paswoordIdemControler);
 
     }
@@ -209,10 +198,14 @@ public class RegistreerActvity extends AppCompatActivity {
         }
     }
 
+    /**
+     * toevoegen van account aan firebase (als emailadres nog niet in gebruik is)
+     * @param username gebruikersnaam
+     * @param email emailadres
+     * @param password paswoord
+     */
     public void createAccount(String username, String email, String password){
         mAuth.createUserWithEmailAndPassword(email, password)
-
-
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -257,8 +250,6 @@ public class RegistreerActvity extends AppCompatActivity {
                             Toast.makeText(RegistreerActvity.this, "Emailadres reeds in gebruik",
                                     Toast.LENGTH_SHORT).show();
                             }
-
-                        // ...
                     }
                 });
     }

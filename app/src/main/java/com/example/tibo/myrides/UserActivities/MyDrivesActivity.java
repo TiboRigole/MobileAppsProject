@@ -1,28 +1,16 @@
 package com.example.tibo.myrides.UserActivities;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.Rit;
-import com.example.tibo.myrides.Models.PassPolyline;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,12 +19,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Dash;
-import com.google.android.gms.maps.model.Dot;
-import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -55,11 +39,9 @@ import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,28 +49,29 @@ import java.util.Random;
 
 public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    // INIT LAYOUT
+    private Spinner mySpinner;
+    private TextView routeInfo;
 
-    //minimap
+    // INIT MINIMAP
     private MapView mapView;
     private GoogleMap gmap;
     private static final String MAP_VIEW_BUNDLE_KEY = "AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI";
 
-
-    HashMap<Polyline, Rit> polylineRitHashMap;
-    HashMap<String, List<Rit>> dateBasedRitten;
-
-    //firebase authentication handler
+    // INIT FIREBASE
+    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-    //firebase database handler
-    FirebaseFirestore db;
+    // OPSLAG
+    // link tussen Polyline en Rit object
+    private HashMap<Polyline, Rit> polylineRitHashMap;
 
-    Spinner mySpinner;
+    // key = String van datum waarop rit is uitgevoerd
+    // value= lijst van ritten die op datum zijn uitgevoerd
+    private HashMap<String, List<Rit>> dateBasedRitten;
 
-    TextView routeInfo;
-
-
+    // LatLng van source en destination
     private static LatLng source;
     private static LatLng dest;
 
@@ -97,44 +80,28 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_drive);
 
-        //firebase authentication init
+
+
+        // DEF FIREBASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        //firebase database init
         db = FirebaseFirestore.getInstance();
 
+
+
+        // DEF OPSLAG
         dateBasedRitten= new HashMap<>();
         polylineRitHashMap=new HashMap<>();
 
-        mySpinner= findViewById(R.id.datumSpinnerMyDrives);
 
+
+        // DEF LAYOUT
+        mySpinner= findViewById(R.id.datumSpinnerMyDrives);
         routeInfo=findViewById(R.id.routeInfo);
 
-        //fetch alle ritten die uitgevoerd zijn door current user
-        Task<QuerySnapshot> query= db.collection("ritten").whereEqualTo("uitvoerder", currentUser.getEmail()).get();
-        query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                    if(dateBasedRitten.get(documentSnapshot.getString("date"))==null){
-                        dateBasedRitten.put(documentSnapshot.getString("date"),  new ArrayList<>());
-                    }
-
-                    dateBasedRitten.get(documentSnapshot.getString("date")).add(new Rit(documentSnapshot.getData()));
-
-                    visualiseerRitten();
-                }
-            }
-        });
-        query.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                e.printStackTrace();
-            }
-        });
 
 
-        // minimap
+        // DEF MINIMAP
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
@@ -147,8 +114,39 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
 
 
 
+        //fetch alle ritten die uitgevoerd zijn door current user
+        // voeg ze toe aan hashmap aan de hand van datum waarop ze zijn uitgevoerd
+        Task<QuerySnapshot> query= db.collection("ritten").whereEqualTo("uitvoerder", currentUser.getEmail()).get();
+        query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                    if(dateBasedRitten.get(documentSnapshot.getString("date"))==null){
+                        dateBasedRitten.put(documentSnapshot.getString("date"),  new ArrayList<>());
+                    }
+
+                    dateBasedRitten.get(documentSnapshot.getString("date")).add(new Rit(documentSnapshot.getData()));
+
+                }
+                // visualisatie van de ritten op de map
+                visualiseerRitten();
+            }
+        });
+        query.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+
+
     }
 
+    /**
+     * lijn in vogelvlucht van verschillende sources and destinations om routes aan te tonen
+     * als polyline geklikt wordt, verschijnt informatie in textview onder map
+     */
     public void visualiseerRitten(){
         //@TODO synchronisatie probleem oplossen, wachten op 2 requests totdat lijn getrokken mag worden, groot probleem, moeilijk op te lossen !!
 
@@ -284,6 +282,13 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         });
     }
 
+    /**
+     * tekenen van polyline
+     * @param source vertrekpunt
+     * @param dest destination
+     * @param color kleur van polyline
+     * @param rit Rit object om toe te voegen om link te leggen via rit en polyline in hashmap
+     */
     private synchronized void drawPolyline(LatLng source, LatLng dest, int color, Rit rit) {
         ArrayList<LatLng> points = new ArrayList<LatLng>();
         PolylineOptions polyLineOptions = new PolylineOptions();
@@ -316,6 +321,8 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
                 routeInfo.setText(r.toString());
             }
         });
+
+
 
 
     }

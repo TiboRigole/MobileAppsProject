@@ -1,4 +1,4 @@
-package com.example.tibo.myrides;
+package com.example.tibo.myrides.General;
 
 
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

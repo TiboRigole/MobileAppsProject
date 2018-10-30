@@ -8,14 +8,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.Rit;
-import com.example.tibo.myrides.Models.PassPolyline;
+import com.example.tibo.myrides.HelperPackage.PassPolyline;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,44 +53,46 @@ import java.util.Random;
 
 public class SummaryActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    boolean heenenterug;
-    boolean computed=false;
+    // STATUS
+    private boolean computed=false;
 
-    //minimap
+    // INIT MINIMAP
     private MapView mapView;
     private GoogleMap gmap;
     private static final String MAP_VIEW_BUNDLE_KEY = "AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI";
-    LatLng center;
-    LatLng sourceLatLng;
-    LatLng destLatLng;
-
-    int meter;
-    double kilometer;
-    double verbruik; // liter per km
-    double prijsNafte; // €/l
-    double resultaat;
-    String einde;
-    String start;
-    String nummerplaat;
-    Polyline polyline;
-
-    TextView source;
-    TextView destination;
+    private LatLng center;
+    private  LatLng sourceLatLng;
+    private  LatLng destLatLng;
 
 
-    TextView nummerPlaatTextView;
+    // EIGENSCHAPPEN RIT
+    private double kilometer;
+    private double verbruik; // liter per km
+    private double prijsNafte; // €/l
+    private double resultaat;
+    private String einde;
+    private String start;
+    private String nummerplaat;
+    private boolean heenenterug;
+    private Polyline polyline;
 
 
-    //firebase authentication handler
+    // INIT LAYOUT
+    private TextView source;
+    private TextView destination;
+    private TextView nummerPlaatTextView;
+    private CheckBox retour;
+    private Button save;
+
+
+    // INIT FIREBASE
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-
-    //firebase database handler
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
 
-   // protected static CustomSharedPreference mPref;
-    DecimalFormat df = new DecimalFormat("#.##");
+    // FORMAT DOUBLES
+    private DecimalFormat df = new DecimalFormat("#.##");
 
 
     @Override
@@ -99,49 +100,39 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary);
 
+        // DEF FIREBASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        //firebase database init
         db = FirebaseFirestore.getInstance();
 
+        // GET RIT EIGENSCHAPPEN
         Bundle bundle= getIntent().getExtras();
         start= bundle.getString("vertrek");
         einde= bundle.getString("aankomst");
         center= (LatLng) bundle.get("center");
         sourceLatLng=(LatLng) bundle.get("sourceLatLng");
         destLatLng=(LatLng)bundle.get("destLatLng");
+        kilometer= Double.parseDouble(bundle.getString("distance")); // km
 
+
+        // DEF LAYOUT
         source= (TextView) findViewById(R.id.source);
         destination= (TextView) findViewById(R.id.destination);
         nummerplaat=bundle.getString("nummerplaat");
         nummerPlaatTextView=findViewById(R.id.nummerPlaat);
         nummerPlaatTextView.setTextSize(20);
         nummerPlaatTextView.setText(nummerplaat);
-
         source.setText(start);
         destination.setText(einde);
+        retour=(CheckBox) findViewById(R.id.retour);
+        save= (Button)findViewById(R.id.save);
 
-
-        // nu worden de berekeningen gedaan
-        try {
-            parseResults();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        CheckBox retour=(CheckBox) findViewById(R.id.retour);
-
-
-
-
-        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt
+        // add toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_SummaryActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Overzicht rit");
 
-
-        Button save= (Button)findViewById(R.id.save);
+        // LOGIC BUTTONS AND WIDGETS
         save.setOnClickListener((v)->{
             if(computed) {
                 try {
@@ -163,32 +154,31 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
 
 
 
-        // minimap
+        // DEF MINIMAP
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
         }
-
         mapView = findViewById(R.id.mapRoute);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
 
-// Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+        // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+        MapsInitializer.initialize(mapView.getContext());
 
-            MapsInitializer.initialize(mapView.getContext());
+        // COMPUTATIONS
+        try {
+            parseResults();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
 
     public void parseResults() throws JSONException {
 
-        // berekenen van resultaten
-        Bundle bundle= getIntent().getExtras();
-
-        // kilometer uit vorige activity
-        kilometer= Double.parseDouble(bundle.getString("distance")); // km
-
-
+        // vraag auto op waar kenteken gelijk is aan nummerplaat => verkrijgen van verbruik en benzinetype
         Task<QuerySnapshot> query= db.collection("autos").whereEqualTo("kenteken", nummerplaat).get();
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -218,6 +208,13 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
 
     }
 
+    /**
+     * visualiseren van de resultaten (meegegeven in de parameters van deze methode)
+     * @param kilometer
+     * @param verbruik
+     * @param prijsNafte
+     * @param resultaat
+     */
     private void visualiseerResultaten(double kilometer, double verbruik, double prijsNafte, double resultaat) {
         runOnUiThread(new Runnable() {
             @Override
@@ -241,6 +238,16 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
 
+    /**
+     * Rit opslaan in de database
+     * @param start vertrekpunt
+     * @param einde destination
+     * @param kilometer afstand in kilometers
+     * @param prijsNafte prijs van de nafte
+     * @param resultaat totale prijs
+     * @param heenenterug retour reis boolean
+     * @throws JSONException
+     */
     private void saveRitInDB(String start, String einde, double kilometer, double prijsNafte, double resultaat, boolean heenenterug) throws JSONException {
 
         if(heenenterug){
@@ -303,6 +310,8 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         List<PatternItem> pattern = Arrays.<PatternItem>asList(
                 new Dot(), new Gap(20), new Dash(30), new Gap(20));
         Random rnd= new Random();
+
+        // polyline opvragen vanuit helperclass en deze weergeven op de minimap
         polyline=PassPolyline.polyline;
         gmap.addPolyline(new PolylineOptions()
                 .addAll(PassPolyline.polyline.getPoints())

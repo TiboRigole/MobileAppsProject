@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +20,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import com.example.tibo.myrides.PlaceAutocompleteAdapter;
+import com.example.tibo.myrides.HelperPackage.PlaceAutocompleteAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,27 +32,29 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class AddDriveActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+    // INIT LAYOUT
+    // keuze auto waarmee gereden wordt voor deze rit
+    private LinearLayout autosLijst;
+    private TextView selectedCar;
+    private AutoCompleteTextView source;
+    private AutoCompleteTextView destination;
+    private Button checkRoutes;
+
+    // adapter nodig om textveldjes automatisch aan te vullen
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+
+    // grenzen van autocomplete places
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40, -168), new LatLng(71, 136));
 
-    //firebase authentication handler
+
+    // init firebase database handler
+    private FirebaseFirestore db;
+    // init firebase authentication handler
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-
-    //firebase database handler
-    FirebaseFirestore db;
-
-    //keuze auto waarmee gereden wordt voor deze rit
-    LinearLayout autosLijst;
-    TextView selectedCar;
-
-    AutoCompleteTextView source;
-    AutoCompleteTextView destination;
-
-    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+    // init google api
     private GoogleApiClient mGoogleApiClient;
-
-
 
 
     @Override
@@ -61,19 +62,25 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_drive);
 
-        //firebase authentication init
+        // DEF FIREBASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        //firebase database init
         db = FirebaseFirestore.getInstance();
 
-
+        // DEF LAYOUT
+        // autocompletetextviews
         source = findViewById(R.id.source);
         destination = findViewById(R.id.destination);
-
+        // linearlayout met alle auto's
         autosLijst =findViewById(R.id.autosList);
+        // textview met geselecteerde auto
         selectedCar=findViewById(R.id.selectedCar);
+        // "ga verder" knop
+        checkRoutes = findViewById(R.id.routes);
 
+
+        // LOGIC BUTTONS AND WIDGETS
+        // setup autocompletetextviews
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -85,32 +92,16 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         destination.setAdapter(mPlaceAutocompleteAdapter);
 
 
-        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt
+        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu opkomt)
         Toolbar toolbar = findViewById(R.id.toolbar_AddDriveActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Rit toevoegen");
 
 
 
-        Button routes = (Button) findViewById(R.id.routes);
-        routes.setOnClickListener((v) -> {
-            System.out.println("source tekst " + source.getText().toString());
-            if (!source.getText().toString().equals("") && !destination.getText().toString().equals("") && !selectedCar.getText().toString().equals("Selecteer Auto")) {
-                Intent intent = new Intent(AddDriveActivity.this, MapsRouteActivity.class);
-                intent.putExtra("vertrek", source.getText().toString());
-                intent.putExtra("aankomst", destination.getText().toString());
-                intent.putExtra("autoKenteken", selectedCar.getText().toString());
-                startActivity(intent);
-            } else {
-                Toast toast = Toast.makeText(getApplicationContext(), "vul adressen in of selecteer auto", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
-
-        // vul lijst met auto's aan
-        // vul lijst met mijn auto's en gedeelde auto's
+        // vul lijst met auto's aan + maak items clickable om auto te selecteren
+        // vul lijst met mijn auto's aan
         Task<QuerySnapshot> query= db.collection("autos").whereEqualTo("eigenaar", currentUser.getEmail()).get();
-
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -138,9 +129,7 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
                 e.printStackTrace();
             }
         });
-
-
-
+        // vul lijst met gedeelde auto's aan
         Task<QuerySnapshot> querySharedCars= db.collection("autos").whereArrayContains("sharedWithUsers", currentUser.getEmail()).get();
         querySharedCars.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -168,7 +157,27 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
                 }
             }
         });
+        querySharedCars.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
 
+        // verder gaan naar map met routes
+        checkRoutes.setOnClickListener((v) -> {
+            // geef melding als veldjes niet zijn ingevuld, anders geef gegevens door naar MapActivity
+            if (!source.getText().toString().equals("") && !destination.getText().toString().equals("") && !selectedCar.getText().toString().equals("Selecteer Auto")) {
+                Intent intent = new Intent(AddDriveActivity.this, MapsRouteActivity.class);
+                intent.putExtra("vertrek", source.getText().toString());
+                intent.putExtra("aankomst", destination.getText().toString());
+                intent.putExtra("autoKenteken", selectedCar.getText().toString());
+                startActivity(intent);
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "vul adressen in of selecteer auto", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
 
     }
 

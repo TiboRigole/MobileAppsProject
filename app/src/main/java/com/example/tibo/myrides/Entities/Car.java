@@ -2,6 +2,9 @@ package com.example.tibo.myrides.Entities;
 
 import java.util.List;
 
+/**
+ * Car met gegevens die opgeslagen dienen te worden in de databank
+ */
 public class Car {
 
     // gemiddeld verbruik - liter per 100 km

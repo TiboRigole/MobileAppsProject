@@ -1,4 +1,4 @@
-package com.example.tibo.myrides;
+package com.example.tibo.myrides.HelperPackage;
 /*
  * Copyright (C) 2015 Google Inc. All Rights Reserved.
  *

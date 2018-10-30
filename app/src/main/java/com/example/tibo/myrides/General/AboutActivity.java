@@ -1,16 +1,16 @@
-package com.example.tibo.myrides;
+package com.example.tibo.myrides.General;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.icu.text.LocaleDisplayNames;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.example.tibo.myrides.R;
+
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

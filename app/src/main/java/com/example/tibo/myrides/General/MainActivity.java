@@ -1,4 +1,4 @@
-package com.example.tibo.myrides;
+package com.example.tibo.myrides.General;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.example.tibo.myrides.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

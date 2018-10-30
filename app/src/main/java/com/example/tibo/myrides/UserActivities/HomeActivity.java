@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.tibo.myrides.MainActivity;
+import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,50 +30,41 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class HomeActivity extends AppCompatActivity {
 
-    // lists met auto's
-    LinearLayout myCarsLayout;
-    LinearLayout sharedCarsLayout;
-
-
-
-    //firebase authentication handler
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
-
-    //firebase database handler
-    FirebaseFirestore db;
-    //https://firebase.google.com/docs/firestore/quickstart
-
+    // INIT LAYOUT
+    // lijsten met eigen en gedeelde auto's
+    private LinearLayout myCarsLayout;
+    private LinearLayout sharedCarsLayout;
     //zijkantLayout
     private DrawerLayout mDrawerLayout;
+
+    // INIT FIREBASE
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private FirebaseFirestore db;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        //firebase authentication init
+        // DEF FIREBASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        Log.d("FIREBASE", currentUser.toString());
-
-        //firebase database init
         db = FirebaseFirestore.getInstance();
 
-
+        // DEF LAYOUT
         myCarsLayout=findViewById(R.id.myCarsList);
         sharedCarsLayout=findViewById(R.id.sharedCarsList);
-
-
-        //zijkantmenu init
         mDrawerLayout = findViewById(R.id.drawer_layout_home);
 
-        //toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu oppopt)
+        // toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu opkomt)
         Toolbar toolbar = findViewById(R.id.toolbar_HomeActivity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Hoofdmenu");
 
-        //menuknopje toevoegen aan de toolbar
+        //menuknop toevoegen aan de toolbar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -89,18 +80,17 @@ public class HomeActivity extends AppCompatActivity {
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
 
+
+                        // verschillende logica's / doorverwijzingen bij knopjes
                         if(menuItem.getItemId() == R.id.nav_logout){
                             Log.d("checketupt","tis de justen");
 
                             //log de user uit
                             mAuth.signOut();
-
                             //log uit van facebook
                             LoginManager.getInstance().logOut();
-
                             //ga terug naar de mainActivity
                             startActivity(new Intent(HomeActivity.this, MainActivity.class));
-
                         }
 
                         if(menuItem.getItemId()==R.id.nav_add_drive){
@@ -119,11 +109,6 @@ public class HomeActivity extends AppCompatActivity {
                             startActivity(new Intent(HomeActivity.this, MyDrivesActivity.class));
                         }
 
-                        // Add code here to update the UI based on the item selected
-                        // hier komt de logica wat er moet gebeuren eenmaal je op een
-                        // knop in de zijkantmenu duwt
-                        // For example, swap UI fragments here
-
                         return true;
                     }
                 });
@@ -131,7 +116,6 @@ public class HomeActivity extends AppCompatActivity {
 
         // vul lijst met mijn auto's en gedeelde auto's
         Task<QuerySnapshot> query= db.collection("autos").whereEqualTo("eigenaar", currentUser.getEmail()).get();
-
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -151,8 +135,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
-
         Task<QuerySnapshot> querySharedCars= db.collection("autos").whereArrayContains("sharedWithUsers", currentUser.getEmail()).get();
         querySharedCars.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -164,6 +146,12 @@ public class HomeActivity extends AppCompatActivity {
                     kentekenTextView.setText(documentSnapshot.get("kenteken").toString());
                     sharedCarsLayout.addView(kentekenTextView);
                 }
+            }
+        });
+        querySharedCars.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
             }
         });
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.example.tibo.myrides.R;
 
+//@TODO ritten van andere met jou auto weergeven
 public class OtherDrivesActivity extends AppCompatActivity {
 
     @Override

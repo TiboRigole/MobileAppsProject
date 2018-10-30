@@ -1,23 +1,23 @@
 package com.example.tibo.myrides.Entities;
 
-import com.google.android.gms.maps.model.Polyline;
-
-import java.util.Date;
 import java.util.Map;
 
+/**
+ * Rit met gegevens die opgeslagen dienen te worden in de databank
+ */
 public class Rit {
 
-    String vertrekpunt;
-    String bestemming;
-    String nummerplaat;
-    Double afstand;
-    Double prijsNafte;
-    Double totalePrijs;
-    boolean heenenterug;
-    String uitvoerder;
-    String eigenaarAuto;
-
-    String date;
+    private String vertrekpunt;
+    private String bestemming;
+    private String nummerplaat;
+    private Double afstand;
+    private Double prijsNafte;
+    private Double totalePrijs;
+    private boolean heenenterug;
+    private String uitvoerder;
+    private String eigenaarAuto;
+    // YYYY-MM-DD
+    private String date;
 
     public Rit(String date, String uitvoerder, String eigenaarAuto, String vertrekpunt, String bestemming, String nummerplaat, Double afstand, Double prijsNafte, Double totalePrijs, boolean heenenterug) {
         this.date = date;
