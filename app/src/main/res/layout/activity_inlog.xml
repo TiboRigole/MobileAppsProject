@@ -26,49 +26,64 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="113dp"
-        android:layout_height="73dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.003"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:src="@drawable/facebook" />
-
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textPersonName"
-        android:textColor="@color/colorText"
-        android:textColorHighlight="@color/colorText"
-        android:theme="@style/MyEditTextTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/logInButton"
+        app:layout_constraintVertical_bias="0.796" />
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/bg_edittext_icon"
+
+        android:drawableLeft="@drawable/ic_email_white_18dp"
+
+        android:drawablePadding="20dp"
+
+        android:ems="15"
+
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+
+        android:paddingLeft="8dp"
+        android:paddingTop="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/colorTextInv"
+
+        android:theme="@style/MyEditTextTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtViewTitel" />
 
     <EditText
         android:id="@+id/editTextPaswoord"
-        android:layout_width="260dp"
-        android:layout_height="46dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ems="10"
+        android:background="@drawable/bg_edittext_icon"
+
+        android:drawableLeft="@drawable/ic_key_white_18dp"
+
+        android:drawablePadding="20dp"
+
+        android:ems="15"
+
         android:hint="Paswoord"
         android:inputType="textPassword"
-        android:textColor="@color/colorText"
-        android:textColorHighlight="@color/colorText"
+
+        android:paddingLeft="8dp"
+        android:paddingTop="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/colorTextInv"
+
         android:theme="@style/MyEditTextTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -78,13 +93,15 @@
     <Button
         android:id="@+id/logInButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="212dp"
-        android:text="log in"
+        android:layout_height="0dp"
+        android:layout_marginTop="52dp"
+        android:ems="15"
+        android:text="Log In"
+        android:textAllCaps="true"
         android:theme="@style/buttonStyle"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPaswoord" />
 
     <!--android:visibility="invisible"-->
 

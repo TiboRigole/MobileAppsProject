@@ -18,15 +18,36 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI" />
 
-        <activity android:name=".General.MainActivity">
+        <activity android:name=".General.MainActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".General.AboutActivity" />
-        <activity android:name=".General.InlogActivity" />
+
+        <activity android:name=".General.AboutActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".General.InlogActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".General.RegistreerActvity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".UserActivities.HomeActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".UserActivities.AddDriveActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".UserActivities.SummaryActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".UserActivities.MapsRouteActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".UserActivities.AddCarActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".UserActivities.MyDrivesActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".UserActivities.OtherDrivesActivity"
+            android:theme="@style/AppTheme"/>
+
 
         <!-- FACEBOOK STUFF -->
         <activity
@@ -47,14 +68,6 @@
         </activity>
         <!-- EINDE FACEBOOK STUFF -->
 
-        <activity android:name=".General.RegistreerActvity" />
-        <activity android:name=".UserActivities.HomeActivity" />
-        <activity android:name=".UserActivities.AddDriveActivity" />
-        <activity android:name=".UserActivities.SummaryActivity" />
-        <activity android:name=".UserActivities.MapsRouteActivity" />
-        <activity android:name=".UserActivities.AddCarActivity" />
-        <activity android:name=".UserActivities.MyDrivesActivity" />
-        <activity android:name=".UserActivities.OtherDrivesActivity"></activity>
     </application>
 
 </manifest>

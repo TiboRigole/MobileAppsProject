@@ -127,10 +127,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         retour=(CheckBox) findViewById(R.id.retour);
         save= (Button)findViewById(R.id.save);
 
-        // add toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar_SummaryActivity);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Overzicht rit");
+
 
         // LOGIC BUTTONS AND WIDGETS
         save.setOnClickListener((v)->{

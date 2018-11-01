@@ -6,23 +6,25 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorBackgroundLight</item>
     </style>
 
-    <style name="buttonStyle" parent="Theme.AppCompat.Light">
+    <style name="buttonStyle" parent="AppTheme">
         <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/colorText</item>
     </style>
 
-    <style name="MyEditTextTheme">
+    <style name="MyEditTextTheme"  parent="AppTheme">
         <!-- Used for the bottom line when not selected / focused -->
         <item name="colorControlNormal">@color/colorText</item>
+        <item name="android:textColor">@color/colorTextInv</item>
         <item name="android:textColorHint">@color/colorTextHint</item>
 
-        <item name="android:textColorHighlight">@color/colorText</item>
+
     </style>
 
-    <style name="toolbarStyle">
+    <style name="toolbarStyle"  parent="AppTheme">
         <item name="android:textColorPrimary">@color/colorText</item>
         <item name="android:textColorSecondary">@color/colorText</item>
         <item name="android:actionMenuTextColor">@color/colorText</item>

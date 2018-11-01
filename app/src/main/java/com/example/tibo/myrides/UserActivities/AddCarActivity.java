@@ -3,11 +3,17 @@ package com.example.tibo.myrides.UserActivities;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,7 +23,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.Car;
+import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.R;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,6 +54,10 @@ public class AddCarActivity extends AppCompatActivity {
     private EditText kentekenEditView;
     // nodig om prijs van benzine te bepalen
     private Spinner benzineTypeSpinner;
+    // zijkantview
+    private DrawerLayout mDrawerLayout;
+
+
 
     // init firebase database
     private FirebaseFirestore db;
@@ -77,6 +89,63 @@ public class AddCarActivity extends AppCompatActivity {
         merkEditView= findViewById(R.id.merkEditView);
         kentekenEditView= findViewById(R.id.kentekenEditView);
         benzineTypeSpinner= findViewById(R.id.benzineTypeDropdown);
+        mDrawerLayout = findViewById(R.id.drawer_layout_addcar);
+
+
+        // toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu opkomt)
+        Toolbar toolbar = findViewById(R.id.toolbar_AddCarActivity);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Add Car");
+
+        //menuknop toevoegen aan de toolbar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+
+
+        //item tappen : zet het item op selected,  sluit de zijbar
+        NavigationView navigationView = findViewById(R.id.navigationzijkant_view);
+        navigationView.setCheckedItem(R.id.nav_add_car);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        // verschillende logica's / doorverwijzingen bij knopjes
+                        if(menuItem.getItemId() == R.id.nav_logout){
+                            //log de user uit
+                            mAuth.signOut();
+                            //log uit van facebook
+                            LoginManager.getInstance().logOut();
+                            //ga terug naar de mainActivity
+                            startActivity(new Intent(AddCarActivity.this, MainActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_add_drive){
+                            startActivity(new Intent(AddCarActivity.this, AddDriveActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_add_car){
+                            startActivity(new Intent(AddCarActivity.this, AddCarActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_other_drives){
+                            startActivity(new Intent(AddCarActivity.this, OtherDrivesActivity.class ));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_my_drives){
+                            startActivity(new Intent(AddCarActivity.this, MyDrivesActivity.class));
+                        }
+
+                        return true;
+                    }
+                });
+
 
         // Waardes aan spinner toekennen
         String[] benzinetypes= new String[]{"DIESEL", "EURO 95 / E10", "SUPER+98", "CNG", "AD BLUE"};
@@ -169,5 +238,17 @@ public class AddCarActivity extends AppCompatActivity {
 
 
 
+    }
+
+    //https://developer.android.com/training/implementing-navigation/nav-drawer#java
+    //logica wanneer op menu knop geduwd wordt dat het sidebarmenu geopend wordt
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

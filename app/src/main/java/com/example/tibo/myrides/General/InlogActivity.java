@@ -75,29 +75,19 @@ public class InlogActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
 
-                                    Log.d("LOGINDEBUG","login successful, onComplete hier");
+                                    Log.d("LOGINDEBUG","login successfull");
 
                                     // Sign in success, update UI with the signed-in user's information
-                                    Log.d("LOGINDEBUG", "signInWithEmail:success");
+
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Log.d("LOGINDEBUG",user.toString());
-                                    Log.d("LOGINDEBUG","updateUIAfterLogin enter");
 
-                                    Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
 
-                                    //ga naar ingelogde pagina
-                                    //wacht 3 seconden
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            //wat er moet gebeuren na 5 seconden
-                                            Log.d("LOGINDEBUG","3 seconden gewacht!");
 
-                                            //naar homeActivity
-                                            updateUIAfterLogin(mAuth.getCurrentUser());
 
-                                        }
-                                    }, 1500);
+                                    //naar homeActivity
+                                    updateUIAfterLogin(mAuth.getCurrentUser());
+
 
                                 } else {
                                     // If sign in fails, display a message to the user.

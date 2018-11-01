@@ -11,8 +11,8 @@
         android:id="@+id/toolbar_AddDriveActivity"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:theme="@style/toolbarStyle"/>
+        android:background="@color/colorBackgroundLight"
+        app:theme="@style/toolbarStyle" />
 
     <AutoCompleteTextView
         android:id="@+id/source"

@@ -8,13 +8,6 @@
     tools:context="com.example.tibo.myrides.UserActivities.SummaryActivity">
 
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_SummaryActivity"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:theme="@style/toolbarStyle"/>
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -26,7 +19,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_SummaryActivity">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/afstandLayout"
@@ -50,9 +43,9 @@
             <TextView
                 android:id="@+id/kilometers"
                 android:layout_width="wrap_content"
-                android:textColor="@color/colorText"
                 android:layout_height="wrap_content"
                 android:text="0.00"
+                android:textColor="@color/colorText"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -78,9 +71,9 @@
             <TextView
                 android:id="@+id/verbruik"
                 android:layout_width="wrap_content"
-                android:textColor="@color/colorText"
                 android:layout_height="wrap_content"
                 android:text="0.00"
+                android:textColor="@color/colorText"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -100,15 +93,15 @@
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:text="prijs nafte" />
+                android:text="prijs nafte"
+                android:textColor="@color/colorText" />
 
             <TextView
                 android:id="@+id/prijsNafte"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
                 android:text="0.00"
+                android:textColor="@color/colorText"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -126,10 +119,10 @@
 
             <TextView
                 android:id="@+id/textView16"
-                android:textColor="@color/colorText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="heen en terug" />
+                android:text="heen en terug"
+                android:textColor="@color/colorText" />
 
             <CheckBox
                 android:id="@+id/retour"
