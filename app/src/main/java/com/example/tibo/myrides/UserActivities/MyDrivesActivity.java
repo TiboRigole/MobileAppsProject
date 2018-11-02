@@ -1,9 +1,17 @@
 package com.example.tibo.myrides.UserActivities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,7 +19,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.tibo.myrides.Entities.Rit;
+import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.R;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -52,7 +62,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
     // INIT LAYOUT
     private Spinner mySpinner;
     private TextView routeInfo;
-
+    private DrawerLayout mDrawerLayout;
     // INIT MINIMAP
     private MapView mapView;
     private GoogleMap gmap;
@@ -71,9 +81,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
     // value= lijst van ritten die op datum zijn uitgevoerd
     private HashMap<String, List<Rit>> dateBasedRitten;
 
-    // LatLng van source en destination
-    private static LatLng source;
-    private static LatLng dest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +106,61 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         // DEF LAYOUT
         mySpinner= findViewById(R.id.datumSpinnerMyDrives);
         routeInfo=findViewById(R.id.routeInfo);
+        mDrawerLayout = findViewById(R.id.drawer_layout_adddrive);
+
+        // toolbar toevoegen aan de layout (nodig om de menuknop te hebben, die het zijkantmenu opkomt)
+        Toolbar toolbar = findViewById(R.id.toolbar_MyDriveActivity);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("My Drives");
+
+        //menuknop toevoegen aan de toolbar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        //item tappen : zet het item op selected,  sluit de zijbar
+        NavigationView navigationView = findViewById(R.id.navigationzijkant_view);
+        navigationView.setCheckedItem(R.id.nav_my_drives);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+
+                        // verschillende logica's / doorverwijzingen bij knopjes
+                        if(menuItem.getItemId() == R.id.nav_logout){
+
+                            //log de user uit
+                            mAuth.signOut();
+                            //log uit van facebook
+                            LoginManager.getInstance().logOut();
+                            //ga terug naar de mainActivity
+                            startActivity(new Intent(MyDrivesActivity.this, MainActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_add_drive){
+                            startActivity(new Intent(MyDrivesActivity.this, AddDriveActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_add_car){
+                            startActivity(new Intent(MyDrivesActivity.this, AddCarActivity.class));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_other_drives){
+                            startActivity(new Intent(MyDrivesActivity.this, OtherDrivesActivity.class ));
+                        }
+
+                        if(menuItem.getItemId()==R.id.nav_my_drives){
+                            startActivity(new Intent(MyDrivesActivity.this, MyDrivesActivity.class));
+                        }
+
+                        return true;
+                    }
+                });
 
 
 
@@ -169,107 +232,11 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
                     int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
 
+                    BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                    gmap.addMarker(new MarkerOptions().position(rit.getVertrekCoord()).title(rit.getVertrekpunt()).icon(icon));
+                    gmap.addMarker(new MarkerOptions().position(rit.getEindCoord()).title(rit.getBestemming()).icon(icon));
 
-
-                        // init coordinates source
-                        StringBuilder sourceURL = new StringBuilder();
-                        sourceURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
-                        sourceURL.append(rit.getVertrekpunt());
-                        sourceURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
-                        Request request = new Request.Builder()
-                                .url(sourceURL.toString())
-                                .get()
-                                .addHeader("cache-control", "no-cache")
-                                .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
-                                .build();
-                        OkHttpClient client = new OkHttpClient();
-                        Call sourceRequest=client.newCall(request);
-                        sourceRequest.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Request request, IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onResponse(Response response) throws IOException {
-
-                                try {
-                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                    double latSource = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
-                                    double lngSource = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            source = new LatLng(latSource, lngSource);
-                                            BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-                                            gmap.addMarker(new MarkerOptions().position(source).title(rit.getVertrekpunt()).icon(icon));
-                                            if(dest!=null){
-                                                drawPolyline(source, dest, color,rit);
-                                            }
-                                        }
-                                    });
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-                        });
-
-
-
-
-                        // init coordinates destination
-                        StringBuilder destURL = new StringBuilder();
-                        destURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
-                        destURL.append(rit.getBestemming());
-                        destURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
-                        Request destRequest = new Request.Builder()
-                                .url(destURL.toString())
-                                .get()
-                                .addHeader("cache-control", "no-cache")
-                                .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
-                                .build();
-                        Call destinationRequest= client.newCall(destRequest);
-                        destinationRequest.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Request request, IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onResponse(Response response) throws IOException {
-                                try {
-
-                                    JSONObject jsonObject = new JSONObject(response.body().string());
-                                    double latDest = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
-                                    double lngDest = (double) jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            dest = new LatLng(latDest, lngDest);
-                                            gmap.addMarker(new MarkerOptions().position(dest).title(rit.getBestemming()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                                            if(source!=null){
-                                                drawPolyline(source, dest, color,rit);
-                                            }
-                                        }
-                                    });
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-                        });
-
-
-
-
-
-
-
+                    drawPolyline(rit.getVertrekCoord(), rit.getEindCoord(), color,rit);
 
 
                 }
@@ -290,7 +257,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
      * @param rit Rit object om toe te voegen om link te leggen via rit en polyline in hashmap
      */
     private synchronized void drawPolyline(LatLng source, LatLng dest, int color, Rit rit) {
-        ArrayList<LatLng> points = new ArrayList<LatLng>();
+        ArrayList<LatLng> points = new ArrayList<>();
         PolylineOptions polyLineOptions = new PolylineOptions();
         points.add(source);
         points.add(dest);
@@ -343,5 +310,17 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+
+    //logica wanneer op menu knop geduwd wordt dat het sidebarmenu geopend wordt
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -262,7 +262,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
                     String eigenaarAuto=documentSnapshot.get("eigenaar").toString();
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                     Date date = new Date();
-                    Rit rit= new Rit(dateFormat.format(date), currentUser.getEmail(),eigenaarAuto, start, einde, nummerPlaatTextView.getText().toString(), finalKilometer, prijsNafte, finalResultaat, heenenterug);
+                    Rit rit= new Rit(dateFormat.format(date), currentUser.getEmail(),eigenaarAuto, start, einde, nummerPlaatTextView.getText().toString(), finalKilometer, prijsNafte, finalResultaat, heenenterug, sourceLatLng, destLatLng);
 
                     db.collection("ritten")
                             .add(rit)

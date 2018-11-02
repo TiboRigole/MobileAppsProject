@@ -62,10 +62,6 @@ public class RegistreerActvity extends AppCompatActivity {
         // DEF FIREBASE
         mAuth=FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
 
 
 
