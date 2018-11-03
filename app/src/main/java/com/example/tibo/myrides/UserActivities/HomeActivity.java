@@ -1,6 +1,9 @@
 package com.example.tibo.myrides.UserActivities;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.tibo.myrides.General.MainActivity;
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,14 +45,16 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirebaseFirestore db;
-
-
+    private BroadcastReceiver br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        br= new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
         // DEF FIREBASE
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -171,7 +177,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(br);
+    }
 }
