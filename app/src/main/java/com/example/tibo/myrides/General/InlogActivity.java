@@ -12,12 +12,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -28,12 +31,23 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.JsonObject;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
-//https://github.com/firebase/quickstart-android/blob/8ab219cb636ff5f7e8f8fdf5f8f6f77b3094e0f8/auth/app/src/main/java/com/google/firebase/quickstart/auth/java/FacebookLoginActivity.java#L117-L123
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 public class InlogActivity extends AppCompatActivity {
 
     //firebase authentication handler
-    private FirebaseAuth mAuth;
+    //private FirebaseAuth mAuth;
 
     //manager voor facebook login
     private CallbackManager callbackManager;
@@ -50,6 +64,10 @@ public class InlogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inlog);
+        //FIREBASE
+        //init mAuth
+        //mAuth = FirebaseAuth.getInstance();
+        /**/
 
         //GUI
         //init buttons
@@ -69,49 +87,45 @@ public class InlogActivity extends AppCompatActivity {
                 String email = emailTextView.getText().toString();
                 String password = paswoordTextView.getText().toString();
 
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(InlogActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-
-                                    Log.d("LOGINDEBUG","login successfull");
-
-                                    // Sign in success, update UI with the signed-in user's information
-
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Log.d("LOGINDEBUG",user.toString());
-
-
-
-
-                                    //naar homeActivity
-                                    updateUIAfterLogin(mAuth.getCurrentUser());
-
-
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w("firebaseloginattempt", "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(InlogActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                if (!email.equals("") && !password.equals("")) {
+                    loginWithDisplayName(email, password);
+                    //mAuth.signInWithEmailAndPassword(email, password)
+                    //        .addOnCompleteListener(InlogActivity.this, new OnCompleteListener<AuthResult>() {
+                    //            @Override
+                    //            public void onComplete(@NonNull Task<AuthResult> task) {
+                    //                if (task.isSuccessful()) {
+                    //
+                    //                    Log.d("LOGINDEBUG", "login successfull");
+                    //
+                    //                    // Sign in success, update UI with the signed-in user's information
+                    //
+                    //                    FirebaseUser user = mAuth.getCurrentUser();
+                    //                    Log.d("LOGINDEBUG", user.toString());
+                    //
+                    //
+                    //                    //naar homeActivity
+                    //                    updateUIAfterLogin(mAuth.getCurrentUser());
+                    //
+                    //
+                    //                } else {
+                    //                    // If sign in fails, display a message to the user.
+                    //                    Log.w("firebaseloginattempt", "signInWithEmail:failure", task.getException());
+                    //                    Toast.makeText(InlogActivity.this, "Authentication failed.",
+                    //                            Toast.LENGTH_SHORT).show();
+                    //                }
+                    //            }
+                    //        });*/
+                }
             }
         });
 
 
-        //FIREBASE
-        //init mAuth
-        mAuth = FirebaseAuth.getInstance();
 
         //FACEBOOK
         //init manager to handle facebook manager
         callbackManager = CallbackManager.Factory.create();
-        Log.d("FBLOGIN","callbackmanager created");
 
-        // logica facebook
-        // opvragen email en foto
+        // facebook logica
         fbloginButton.setReadPermissions("email", "public_profile");
         Log.d("FBLOGIN","readpermissions set");
 
@@ -121,8 +135,41 @@ public class InlogActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Log.d("FBLOGIN", "facebook:onSuccess: " + loginResult);
 
-                handleFacebookAccessToken(loginResult.getAccessToken());
-                //go to next page?
+                // EIGEN SERVER
+
+                // App code
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                Log.v("LoginActivity", response.toString());
+
+                                // Application code
+                                try {
+                                    String email = object.getString("email");
+                                    String displayName = object.getString("name"); // 01/31/1980 format
+
+                                    // registreer user met facebook
+                                    registerAndLoginFacebookUser(displayName, email);
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+
+
+                // VOOR FIREBASE INLOGMETHODE
+                // handleFacebookAccessToken(loginResult.getAccessToken());
+                // go to next page?
             }
 
             @Override
@@ -142,22 +189,132 @@ public class InlogActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
+
+        if(CurrentUser.getInstance()!=null){
             // @TODO: doorverwijzen naar home van user
-            updateUIAfterLogin(currentUser);
+            updateUIAfterLogin(CurrentUser.getInstance());
         }
     }
 
+    /**
+     * login aan de hand van een displayname
+     * @param displayName displayname
+     * @param password paswoord
+     */
+    private void loginWithDisplayName(String displayName, String password){
+
+        OkHttpClient client = new OkHttpClient();
+
+        try {
+
+            // aanmaken body van request
+            JSONObject jsonString = new JSONObject()
+                    .put("displayName", displayName)
+                    .put("password", password);
+
+
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, jsonString.toString());
+            Request request = new Request.Builder()
+                    .url("https://distributedsystemsprojec-bd15e.firebaseapp.com/login")
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Postman-Token", "a2ac0538-d987-4f5c-8795-5a199e0ef4fd")
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    System.out.println("response code "+ response.code());
+                    if(response.code()==200) {
+                        // login ok, set current user local
+                        CurrentUser.getInstance().setEmail(response.body().string());
+                        CurrentUser.getInstance().setDisplayName(displayName);
+                        CurrentUser.getInstance().login();
+                        updateUIAfterLogin(CurrentUser.getInstance());
+                    }
+                    else{
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Toast.makeText(InlogActivity.this, response.body().string(), Toast.LENGTH_SHORT).show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                    }
+                }
+            });
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * registreer de user die met facebook is ingelogd
+     * @param displayName name van facebookuser
+     * @param email email adres gekoppeld aan facebookuser
+     */
+    private void registerAndLoginFacebookUser(String displayName, String email){
+        try {
+            // set current user local
+            CurrentUser.getInstance().setDisplayName(displayName);
+            CurrentUser.getInstance().setEmail(email);
+            CurrentUser.getInstance().login();
+
+
+            // maak account aan op server voor user die inlogt met facebook
+            JSONObject jsonString = new JSONObject()
+                    .put("displayName", displayName)
+                    .put("email", email)
+                    .put("password", " ");
+
+            OkHttpClient client = new OkHttpClient();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, jsonString.toString());
+            Request request = new Request.Builder()
+                    .url("https://distributedsystemsprojec-bd15e.firebaseapp.com/registreer")
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Postman-Token", "69946e15-6cdd-46f5-9521-7acba52858bb")
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+
+                }
+            });
+
+
+            updateUIAfterLogin(CurrentUser.getInstance());
+        }
+        catch (JSONException je){
+            je.printStackTrace();
+        }
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         Log.d("FBLOGIN", "onactivityResult binnengekomen!");
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -165,76 +322,65 @@ public class InlogActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-
     /**
+     * als er reeds een user is ingelogd dient de loginpagina niet weergegeven te worden
+     * @param user
+     */
+    private void updateUIAfterLogin(CurrentUser user) {
+        if (user.isLoggedIn()) {
+            startActivity(new Intent(InlogActivity.this, HomeActivity.class));
+        }
+    }
+
+    /*
      * facebook auth with token
      * gebeurt enkel als we met facebook inloggen!
      * @param token
      */
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d("FBLOGIN", "handleFacebookAccessToken:" + token);
-
-        // genereer credentials op basis van token
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-
-        // sign in aan de hand van firebase handler met credential (dus in back-end van firebase)
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("FBLOGIN", "signInWithCredential:success");
-
-                            //toast die login successful zegt, en 3 seconden wacht
-                            Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
-
-                            //ga naar ingelogde pagina
-                            //wacht 3 seconden
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //wat er moet gebeuren na 5 seconden
-                                    Log.d("LOGINDEBUG","3 seconden gewacht!");
-
-                                    //naar homeActivity
-                                    updateUIAfterLogin(mAuth.getCurrentUser());
-
-                                }
-                            }, 1500);
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("FBLOGIN", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(InlogActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-
-                        }
-
-                    }
-                });
-    }
-
-    // @TODO: signout methode ergens implementeren!
-    public void signOut() {
-        mAuth.signOut();
-        LoginManager.getInstance().logOut();
-        Toast.makeText(InlogActivity.this, "Je bent uitgelogd",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    private void updateUIAfterLogin(FirebaseUser user) {
-
-        if (user != null) {
-
-            // @TODO: update UI op basis van data horende bij user, waarschijnlijk doorverwijzing naar volgende pagina
-            startActivity(new Intent(InlogActivity.this, HomeActivity.class));
-
-        } else {
-            // @TODO: update UI wannneer er geen account ingelogd is
-        }
-    }
-
+    // private void handleFacebookAccessToken(AccessToken token) {
+    //    Log.d("FBLOGIN", "handleFacebookAccessToken:" + token);
+    //
+    //    // genereer credentials op basis van token
+    //    AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+    //
+    //    System.out.println(token.getUserId());
+    //    // sign in aan de hand van firebase handler met credential (dus in back-end van firebase)
+    //    mAuth.signInWithCredential(credential)
+    //            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+    //                @Override
+    //                public void onComplete(@NonNull Task<AuthResult> task) {
+    //                    if (task.isSuccessful()) {
+    //                        // Sign in success, update UI with the signed-in user's information
+    //                        Log.d("FBLOGIN", "signInWithCredential:success");
+    //
+    //                        //toast die login successful zegt, en 3 seconden wacht
+    //                        Toast.makeText(InlogActivity.this, "Login succesvol!",Toast.LENGTH_SHORT).show();
+    //
+    //                        //ga naar ingelogde pagina
+    //                        //wacht 3 seconden
+    //                        new Handler().postDelayed(new Runnable() {
+    //                            @Override
+    //                            public void run() {
+    //                                //wat er moet gebeuren na 5 seconden
+    //                                Log.d("LOGINDEBUG","3 seconden gewacht!");
+    //
+    //                               //naar homeActivity
+    //                                updateUIAfterLogin(mAuth.getCurrentUser());
+    //
+    //                            }
+    //                        }, 1500);
+    //
+    //                    } else {
+    //                        // If sign in fails, display a message to the user.
+    //                        Log.w("FBLOGIN", "signInWithCredential:failure", task.getException());
+    //                        Toast.makeText(InlogActivity.this, "Authentication failed.",
+    //                                Toast.LENGTH_SHORT).show();
+    //
+    //                  }
+    //
+    //                }
+    //            });
+    //}
 
 
 }

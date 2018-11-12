@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.Entities.Rit;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.R;
@@ -179,7 +180,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
 
         //fetch alle ritten die uitgevoerd zijn door current user
         // voeg ze toe aan hashmap aan de hand van datum waarop ze zijn uitgevoerd
-        Task<QuerySnapshot> query= db.collection("ritten").whereEqualTo("uitvoerder", currentUser.getEmail()).get();
+        Task<QuerySnapshot> query= db.collection("ritten").whereEqualTo("uitvoerder", CurrentUser.getInstance().getEmail()).get();
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

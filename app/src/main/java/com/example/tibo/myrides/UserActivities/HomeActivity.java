@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
@@ -43,9 +44,13 @@ public class HomeActivity extends AppCompatActivity {
 
     // INIT FIREBASE
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
     private FirebaseFirestore db;
+
+
     private BroadcastReceiver br;
+
+    private CurrentUser currentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         this.registerReceiver(br, filter);
         // DEF FIREBASE
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        currentUser = CurrentUser.getInstance();
         db = FirebaseFirestore.getInstance();
 
         // DEF LAYOUT
@@ -89,10 +94,8 @@ public class HomeActivity extends AppCompatActivity {
 
                         // verschillende logica's / doorverwijzingen bij knopjes
                         if(menuItem.getItemId() == R.id.nav_logout){
-                            Log.d("checketupt","tis de justen");
-
                             //log de user uit
-                            mAuth.signOut();
+                            currentUser.logout();
                             //log uit van facebook
                             LoginManager.getInstance().logOut();
                             //ga terug naar de mainActivity
