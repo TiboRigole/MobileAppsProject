@@ -3,8 +3,6 @@ package com.example.tibo.myrides.General;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,23 +13,13 @@ import android.widget.Toast;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -71,7 +59,7 @@ public class InlogActivity extends AppCompatActivity {
         logInButton = (Button) findViewById(R.id.logInButton);
 
         //init textviews
-        emailTextView = findViewById(R.id.editTextEmail);
+        emailTextView = findViewById(R.id.editTextDisplayName);
         paswoordTextView = findViewById(R.id.editTextPaswoord);
 
         //logica buttons

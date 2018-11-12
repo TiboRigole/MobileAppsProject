@@ -35,19 +35,19 @@
         app:layout_constraintVertical_bias="0.796" />
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
         android:background="@drawable/bg_edittext_icon"
 
-        android:drawableLeft="@drawable/ic_email_white_18dp"
+        android:drawableLeft="@drawable/ic_account_white_18dp"
 
         android:drawablePadding="20dp"
 
         android:ems="15"
 
-        android:hint="Email"
+        android:hint="Username"
         android:inputType="textEmailAddress"
 
         android:paddingLeft="8dp"
@@ -88,7 +88,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextDisplayName" />
 
     <Button
         android:id="@+id/logInButton"
