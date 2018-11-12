@@ -20,10 +20,10 @@
 
     <ImageView
         android:id="@+id/imageView_logo_app"
-        android:layout_width="93dp"
-        android:layout_height="126dp"
-        android:layout_marginTop="90dp"
-        android:src="@drawable/logo"
+        android:layout_width="136dp"
+        android:layout_height="133dp"
+        android:layout_marginTop="56dp"
+        android:src="@mipmap/logoapp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
