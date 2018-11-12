@@ -33,6 +33,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 
 public class RegistreerActvity extends AppCompatActivity {
@@ -87,29 +98,12 @@ public class RegistreerActvity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String username= usernameText.getText().toString();
+                String email= emailText.getText().toString();
+                String paswoord= paswoordText.getText().toString();
 
-                // enkel gebruiker toevoegen als displayname niet in gebruik is
-                Task<QuerySnapshot> query= db.collection("users").whereEqualTo("displayName", username).get();
-                query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.getDocuments().isEmpty()){
-                            // Username is beschikbaar
-                            createAccount(username, emailText.getText().toString(), paswoordText.getText().toString());
+                createAccount(username, email, paswoord);
 
-                        }
-                        else{
-                            Toast.makeText(RegistreerActvity.this, "Username reeds in gebruik",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                query.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+
 
             }
         });
@@ -201,6 +195,66 @@ public class RegistreerActvity extends AppCompatActivity {
      * @param password paswoord
      */
     public void createAccount(String username, String email, String password){
+
+        try {
+            JSONObject newUser= new JSONObject()
+                    .put("displayName", username)
+                    .put("email", email)
+                    .put("password", password);
+
+            OkHttpClient client = new OkHttpClient();
+
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, newUser.toString());
+            Request request = new Request.Builder()
+                    .url("https://distributedsystemsprojec-bd15e.firebaseapp.com/registreer")
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Postman-Token", "988a5df0-74cd-4e1c-b6af-f4781fc01bd0")
+                    .build();
+
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if(response.code()==200){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Toast.makeText(RegistreerActvity.this, response.body().string(), Toast.LENGTH_SHORT).show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                    else{
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Toast.makeText(RegistreerActvity.this, response.body().string(), Toast.LENGTH_SHORT).show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+/*
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -247,6 +301,6 @@ public class RegistreerActvity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             }
                     }
-                });
+                });*/
     }
 }

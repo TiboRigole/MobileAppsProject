@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.Car;
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
@@ -65,7 +66,7 @@ public class AddCarActivity extends AppCompatActivity {
     // init firebase authentication handler
     private FirebaseAuth mAuth;
     // init currentUser
-    private FirebaseUser currentUser;
+    private CurrentUser currentUser;
 
 
     @Override
@@ -78,7 +79,7 @@ public class AddCarActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         // def firebase authentication
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        currentUser = CurrentUser.getInstance();
 
 
         // DEF LAYOUT
@@ -119,7 +120,7 @@ public class AddCarActivity extends AppCompatActivity {
                         // verschillende logica's / doorverwijzingen bij knopjes
                         if(menuItem.getItemId() == R.id.nav_logout){
                             //log de user uit
-                            mAuth.signOut();
+                            currentUser.logout();
                             //log uit van facebook
                             LoginManager.getInstance().logOut();
                             //ga terug naar de mainActivity

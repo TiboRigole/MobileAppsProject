@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,21 +51,21 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
 
     // init firebase database handler
     private FirebaseFirestore db;
-    // init firebase authentication handler
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
+
+
     // init google api
     private GoogleApiClient mGoogleApiClient;
+
+    private CurrentUser currentUser;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_drive);
+        currentUser = CurrentUser.getInstance();
 
-        // DEF FIREBASE
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+
         db = FirebaseFirestore.getInstance();
 
         // DEF LAYOUT

@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.Entities.Rit;
 import com.example.tibo.myrides.HelperPackage.PassPolyline;
 import com.example.tibo.myrides.R;
@@ -86,10 +87,10 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
 
 
     // INIT FIREBASE
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
     private FirebaseFirestore db;
 
+
+    private CurrentUser currentUser;
 
     // FORMAT DOUBLES
     private DecimalFormat df = new DecimalFormat("#.##");
@@ -101,8 +102,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         setContentView(R.layout.activity_summary);
 
         // DEF FIREBASE
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        currentUser = CurrentUser.getInstance();
         db = FirebaseFirestore.getInstance();
 
         // GET RIT EIGENSCHAPPEN
