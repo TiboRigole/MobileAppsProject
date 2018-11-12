@@ -63,8 +63,7 @@ public class AddCarActivity extends AppCompatActivity {
     // init firebase database
     private FirebaseFirestore db;
 
-    // init firebase authentication handler
-    private FirebaseAuth mAuth;
+
     // init currentUser
     private CurrentUser currentUser;
 
@@ -77,8 +76,7 @@ public class AddCarActivity extends AppCompatActivity {
         //FIREBASE
         // def firebase database
         db = FirebaseFirestore.getInstance();
-        // def firebase authentication
-        mAuth = FirebaseAuth.getInstance();
+
         currentUser = CurrentUser.getInstance();
 
 

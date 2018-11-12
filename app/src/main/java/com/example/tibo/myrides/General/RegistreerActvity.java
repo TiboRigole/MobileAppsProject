@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 
@@ -60,7 +61,6 @@ public class RegistreerActvity extends AppCompatActivity {
 
 
     // INIT FIREBASE
-    private FirebaseAuth mAuth;
     FirebaseFirestore db;
 
     @Override
@@ -71,7 +71,6 @@ public class RegistreerActvity extends AppCompatActivity {
 
 
         // DEF FIREBASE
-        mAuth=FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
 
@@ -175,19 +174,6 @@ public class RegistreerActvity extends AppCompatActivity {
 
     }
 
-
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            // @TODO: doorverwijzen naar home van user
-        }
-    }
-
     /**
      * toevoegen van account aan firebase (als emailadres nog niet in gebruik is)
      * @param username gebruikersnaam
@@ -254,53 +240,6 @@ public class RegistreerActvity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-/*
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("FIREBASE", "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
 
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(username)
-                                    .setPhotoUri(null)
-                                    .build();
-                            Task updateProfile= user.updateProfile(profileUpdates);
-                            updateProfile.addOnSuccessListener(new OnSuccessListener() {
-                                @Override
-                                public void onSuccess(Object o) {
-                                    Toast.makeText(RegistreerActvity.this, user.getDisplayName()+ "u bent geregistreerd", Toast.LENGTH_SHORT).show();
-
-
-                                    //voeg document toe met een gegenereerde ID
-                                    db.collection("users")
-                                            .add(user)
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                @Override
-                                                public void onSuccess(DocumentReference documentReference) {
-                                                    Log.d("VALUES","DocumentSnapchat added with ID: "+ documentReference.getId());
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.d("VALUES", "Error adding document: "+ e);
-                                                }
-                                            });
-                                }
-                            });
-
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d("FIREBASE", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegistreerActvity.this, "Emailadres reeds in gebruik",
-                                    Toast.LENGTH_SHORT).show();
-                            }
-                    }
-                });*/
     }
 }

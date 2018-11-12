@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     // INIT FIREBASE
-    private FirebaseAuth mAuth;
+
     private FirebaseFirestore db;
 
 
@@ -61,7 +61,6 @@ public class HomeActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         this.registerReceiver(br, filter);
         // DEF FIREBASE
-        mAuth = FirebaseAuth.getInstance();
         currentUser = CurrentUser.getInstance();
         db = FirebaseFirestore.getInstance();
 

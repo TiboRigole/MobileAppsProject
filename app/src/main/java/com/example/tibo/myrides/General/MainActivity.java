@@ -21,9 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private Button inlogButton;
     private Button registreerButton;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
 
 

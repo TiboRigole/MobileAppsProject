@@ -71,8 +71,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
 
     // INIT FIREBASE
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
+    private CurrentUser currentUser;
 
     // OPSLAG
     // link tussen Polyline en Rit object
@@ -92,8 +91,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
 
 
         // DEF FIREBASE
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        currentUser = CurrentUser.getInstance();
         db = FirebaseFirestore.getInstance();
 
 
@@ -136,7 +134,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
                         if(menuItem.getItemId() == R.id.nav_logout){
 
                             //log de user uit
-                            mAuth.signOut();
+                            currentUser.logout();
                             //log uit van facebook
                             LoginManager.getInstance().logOut();
                             //ga terug naar de mainActivity
