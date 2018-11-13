@@ -1,5 +1,6 @@
 package com.example.tibo.myrides.Entities;
 
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.HashMap;

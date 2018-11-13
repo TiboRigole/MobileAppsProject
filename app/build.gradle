@@ -58,4 +58,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation files('lib/api-common-1.7.0.jar')
+
+    //room persistence
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 }
