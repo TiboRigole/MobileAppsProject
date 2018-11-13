@@ -45,10 +45,6 @@ public class HomeActivity extends AppCompatActivity {
     // INIT FIREBASE
 
     private FirebaseFirestore db;
-
-
-    private BroadcastReceiver br;
-
     private CurrentUser currentUser;
 
 
@@ -57,9 +53,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        br= new NetworkChangeReceiver();
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        this.registerReceiver(br, filter);
+
         // DEF FIREBASE
         currentUser = CurrentUser.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -179,9 +173,5 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.unregisterReceiver(br);
-    }
+
 }

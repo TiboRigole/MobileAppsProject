@@ -2,7 +2,9 @@ package com.example.tibo.myrides.General;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -175,6 +177,7 @@ public class InlogActivity extends AppCompatActivity {
                     .put("password", password);
 
 
+
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, jsonString.toString());
             Request request = new Request.Builder()
@@ -198,6 +201,11 @@ public class InlogActivity extends AppCompatActivity {
                         CurrentUser.getInstance().setEmail(response.body().string());
                         CurrentUser.getInstance().setDisplayName(displayName);
                         CurrentUser.getInstance().login();
+                        saveOfflineUser();
+
+
+
+
                         updateUIAfterLogin(CurrentUser.getInstance());
                     }
                     else{
@@ -233,7 +241,7 @@ public class InlogActivity extends AppCompatActivity {
             CurrentUser.getInstance().setDisplayName(displayName);
             CurrentUser.getInstance().setEmail(email);
             CurrentUser.getInstance().login();
-
+            saveOfflineUser();
 
             // maak account aan op server voor user die inlogt met facebook
             JSONObject jsonString = new JSONObject()
@@ -272,6 +280,21 @@ public class InlogActivity extends AppCompatActivity {
 
     }
 
+
+    private void saveOfflineUser(){
+        SharedPreferences myPref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor myEditor=myPref.edit();
+        JSONObject jsonUserPref= null;
+        try {
+            jsonUserPref = new JSONObject()
+                    .put("displayName", CurrentUser.getInstance().getDisplayName())
+                    .put("email", CurrentUser.getInstance().getEmail());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        myEditor.putString("user", jsonUserPref.toString());
+        myEditor.apply();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("FBLOGIN", "onactivityResult binnengekomen!");
