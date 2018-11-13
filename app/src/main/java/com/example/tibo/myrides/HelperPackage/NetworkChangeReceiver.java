@@ -69,7 +69,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if(isOnline(context)){
 
 
-
+            CurrentUser.getInstance().login();
             Toast.makeText(context, "You are connected to Internet", Toast.LENGTH_SHORT).show();
 
         }else{
