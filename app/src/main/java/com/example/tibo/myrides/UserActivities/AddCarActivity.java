@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.tibo.myrides.Entities.Car;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
+import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -104,46 +105,9 @@ public class AddCarActivity extends AppCompatActivity {
 
 
         //item tappen : zet het item op selected,  sluit de zijbar
-        NavigationView navigationView = findViewById(R.id.navigationzijkant_view);
+        CustomNavigationView navigationView = findViewById(R.id.navigationzijkant_view);
         navigationView.setCheckedItem(R.id.nav_add_car);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
-
-                        // verschillende logica's / doorverwijzingen bij knopjes
-                        if(menuItem.getItemId() == R.id.nav_logout){
-                            //log de user uit
-                            currentUser.logout();
-                            //log uit van facebook
-                            LoginManager.getInstance().logOut();
-                            //ga terug naar de mainActivity
-                            startActivity(new Intent(AddCarActivity.this, MainActivity.class));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_add_drive){
-                            startActivity(new Intent(AddCarActivity.this, AddDriveActivity.class));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_add_car){
-                            startActivity(new Intent(AddCarActivity.this, AddCarActivity.class));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_other_drives){
-                            startActivity(new Intent(AddCarActivity.this, OtherDrivesActivity.class ));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_my_drives){
-                            startActivity(new Intent(AddCarActivity.this, MyDrivesActivity.class));
-                        }
-
-                        return true;
-                    }
-                });
+        navigationView.initSelect(this, mDrawerLayout);
 
 
         // Waardes aan spinner toekennen

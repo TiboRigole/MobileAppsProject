@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
+import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
 import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
@@ -74,8 +75,9 @@ public class HomeActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         //item tappen : zet het item op selected,  sluit de zijbar
-        NavigationView navigationView = findViewById(R.id.navigationzijkant_view);
-        navigationView.setNavigationItemSelectedListener(
+        CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.navigationzijkant_view);
+        navigationView.initSelect(this, mDrawerLayout);
+        /*navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -113,7 +115,7 @@ public class HomeActivity extends AppCompatActivity {
 
                         return true;
                     }
-                });
+                });*/
 
 
         // vul lijst met mijn auto's en gedeelde auto's

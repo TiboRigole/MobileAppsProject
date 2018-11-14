@@ -61,7 +61,7 @@
 
 </android.support.constraint.ConstraintLayout>
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
-    <android.support.design.widget.NavigationView
+    <com.example.tibo.myrides.HelperPackage.CustomNavigationView
         android:id="@+id/navigationzijkant_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -75,5 +75,5 @@
         app:headerLayout="@layout/navigationzijkant_header"
         >
 
-    </android.support.design.widget.NavigationView>
+    </com.example.tibo.myrides.HelperPackage.CustomNavigationView>
 </android.support.v4.widget.DrawerLayout>
