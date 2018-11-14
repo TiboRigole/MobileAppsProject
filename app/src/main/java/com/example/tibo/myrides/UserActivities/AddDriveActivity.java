@@ -3,9 +3,13 @@ package com.example.tibo.myrides.UserActivities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
+import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -52,7 +57,8 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
     // init firebase database handler
     private FirebaseFirestore db;
 
-
+    //zijkantLayout
+    private DrawerLayout mDrawerLayout;
     // init google api
     private GoogleApiClient mGoogleApiClient;
 
@@ -79,6 +85,9 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         // "ga verder" knop
         checkRoutes = findViewById(R.id.routes);
 
+        mDrawerLayout=findViewById(R.id.drawer_layout_adddrive);
+
+
 
         // LOGIC BUTTONS AND WIDGETS
         // setup autocompletetextviews
@@ -98,6 +107,15 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Rit toevoegen");
 
+        //menuknop toevoegen aan de toolbar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        //item tappen : zet het item op selected,  sluit de zijbar
+        CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.navigationzijkant_view);
+        navigationView.setCheckedItem(R.id.nav_add_drive);
+        navigationView.initSelect(this, mDrawerLayout);
 
 
         // vul lijst met auto's aan + maak items clickable om auto te selecteren
@@ -185,5 +203,17 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    //https://developer.android.com/training/implementing-navigation/nav-drawer#java
+    //logica wanneer op menu knop geduwd wordt dat het sidebarmenu geopend wordt
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

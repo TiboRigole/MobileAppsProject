@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.facebook.places.model.CurrentPlaceRequestParams;
 import com.google.gson.JsonParser;
 
@@ -68,11 +70,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
         if(isOnline(context)){
 
-
-            CurrentUser.getInstance().login();
             Toast.makeText(context, "You are connected to Internet", Toast.LENGTH_SHORT).show();
+        }
+        else{
 
-        }else{
             SharedPreferences myPref= PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
             String userString= myPref.getString("user", "");
             Dialog myDialog= new Dialog(context);

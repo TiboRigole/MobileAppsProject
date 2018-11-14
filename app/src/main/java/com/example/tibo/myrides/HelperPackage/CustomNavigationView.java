@@ -12,9 +12,11 @@ import android.view.MenuItem;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.R;
+import com.example.tibo.myrides.UserActivities.AccountActivity;
 import com.example.tibo.myrides.UserActivities.AddCarActivity;
 import com.example.tibo.myrides.UserActivities.AddDriveActivity;
 import com.example.tibo.myrides.UserActivities.MyDrivesActivity;
+import com.example.tibo.myrides.UserActivities.OfflineWarningActivity;
 import com.example.tibo.myrides.UserActivities.OtherDrivesActivity;
 import com.facebook.login.LoginManager;
 
@@ -63,6 +65,9 @@ public class CustomNavigationView extends NavigationView {
                             //ga terug naar de mainActivity
                             context.startActivity(new Intent(context, MainActivity.class));
                         }
+                        if(menuItem.getItemId() == R.id.nav_info){
+                            context.startActivity(new Intent(context, AccountActivity.class));
+                        }
 
                         if (menuItem.getItemId() == R.id.nav_add_drive) {
                             context.startActivity(new Intent(context, AddDriveActivity.class));
@@ -73,11 +78,21 @@ public class CustomNavigationView extends NavigationView {
                         }
 
                         if (menuItem.getItemId() == R.id.nav_other_drives) {
-                            context.startActivity(new Intent(context, OtherDrivesActivity.class));
+                            if(currentUser.isLoggedIn()) {
+                                context.startActivity(new Intent(context, OtherDrivesActivity.class));
+                            }
+                            else{
+                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
+                            }
                         }
 
                         if (menuItem.getItemId() == R.id.nav_my_drives) {
-                            context.startActivity(new Intent(context, MyDrivesActivity.class));
+                            if(currentUser.isLoggedIn()) {
+                                context.startActivity(new Intent(context, MyDrivesActivity.class));
+                            }
+                            else{
+                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
+                            }
                         }
 
                         return true;

@@ -77,45 +77,7 @@ public class HomeActivity extends AppCompatActivity {
         //item tappen : zet het item op selected,  sluit de zijbar
         CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.navigationzijkant_view);
         navigationView.initSelect(this, mDrawerLayout);
-        /*navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
 
-
-                        // verschillende logica's / doorverwijzingen bij knopjes
-                        if(menuItem.getItemId() == R.id.nav_logout){
-                            //log de user uit
-                            currentUser.logout();
-                            //log uit van facebook
-                            LoginManager.getInstance().logOut();
-                            //ga terug naar de mainActivity
-                            startActivity(new Intent(HomeActivity.this, MainActivity.class));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_add_drive){
-                            startActivity(new Intent(HomeActivity.this, AddDriveActivity.class));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_add_car){
-                            startActivity(new Intent(HomeActivity.this, AddCarActivity.class));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_other_drives){
-                            startActivity(new Intent(HomeActivity.this, OtherDrivesActivity.class ));
-                        }
-
-                        if(menuItem.getItemId()==R.id.nav_my_drives){
-                            startActivity(new Intent(HomeActivity.this, MyDrivesActivity.class));
-                        }
-
-                        return true;
-                    }
-                });*/
 
 
         // vul lijst met mijn auto's en gedeelde auto's

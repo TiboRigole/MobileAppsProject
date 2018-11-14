@@ -10,8 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logoappyellow"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -19,13 +18,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI" />
 
-        <receiver android:name=".HelperPackage.NetworkChangeReceiver" >
+        <receiver android:name=".HelperPackage.NetworkChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".General.MainActivity"
+        <activity
+            android:name=".General.MainActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,28 +33,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".General.AboutActivity"
+        <activity
+            android:name=".General.AboutActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".General.InlogActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".General.RegistreerActvity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".UserActivities.HomeActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".UserActivities.AddDriveActivity"
+        <activity
+            android:name=".General.InlogActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".UserActivities.SummaryActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".UserActivities.MapsRouteActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".UserActivities.AddCarActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".UserActivities.MyDrivesActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".UserActivities.OtherDrivesActivity"
-            android:theme="@style/AppTheme"/>
-
+        <activity
+            android:name=".General.RegistreerActvity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.HomeActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.AddDriveActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.SummaryActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.MapsRouteActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.AddCarActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.MyDrivesActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserActivities.OtherDrivesActivity"
+            android:theme="@style/AppTheme" />
 
         <!-- FACEBOOK STUFF -->
         <activity
@@ -75,6 +83,8 @@
         </activity>
         <!-- EINDE FACEBOOK STUFF -->
 
+        <activity android:name=".UserActivities.OfflineWarningActivity" />
+        <activity android:name=".UserActivities.AccountActivity"></activity>
     </application>
 
 </manifest>

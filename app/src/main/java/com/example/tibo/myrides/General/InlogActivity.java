@@ -154,10 +154,9 @@ public class InlogActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        if(CurrentUser.getInstance()!=null){
-            // @TODO: doorverwijzen naar home van user
-            updateUIAfterLogin(CurrentUser.getInstance());
-        }
+
+        updateUIAfterLogin(CurrentUser.getInstance());
+
     }
 
     /**
