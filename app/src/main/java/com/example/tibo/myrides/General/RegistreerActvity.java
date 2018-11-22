@@ -1,5 +1,6 @@
 package com.example.tibo.myrides.General;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -211,18 +212,25 @@ public class RegistreerActvity extends AppCompatActivity {
                 public void onResponse(Response response) throws IOException {
                     if(response.code()==200){
                         runOnUiThread(new Runnable() {
+
                             @Override
                             public void run() {
                                 try {
                                     Toast.makeText(RegistreerActvity.this, response.body().string(), Toast.LENGTH_SHORT).show();
+
+                                    //go back to main screen
+                                    goToInlogActivity();
+
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }
+
                         });
                     }
                     else{
                         runOnUiThread(new Runnable() {
+
                             @Override
                             public void run() {
                                 try {
@@ -231,6 +239,7 @@ public class RegistreerActvity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
+
                         });
                     }
                 }
@@ -240,6 +249,14 @@ public class RegistreerActvity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
+    }
+
+    private void goToInlogActivity() {
+
+        Intent intent = new Intent(this, InlogActivity.class);
+        intent.putExtra("username", usernameText.getText().toString());
+        startActivity(intent);
 
     }
 }

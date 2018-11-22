@@ -1,6 +1,7 @@
 package com.example.tibo.myrides.General;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +45,7 @@ public class InlogActivity extends AppCompatActivity {
     private LoginButton fbloginButton;
 
     //email en paswoord textviews
-    private TextView emailTextView;
+    private TextView usernameTextView;
     private TextView paswoordTextView;
 
     //login button
@@ -52,7 +54,11 @@ public class InlogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i("activitylifecycle","onCreate triggered");
+
         setContentView(R.layout.activity_inlog);
+
 
 
         //GUI
@@ -61,7 +67,7 @@ public class InlogActivity extends AppCompatActivity {
         logInButton = (Button) findViewById(R.id.logInButton);
 
         //init textviews
-        emailTextView = findViewById(R.id.editTextDisplayName);
+        usernameTextView = findViewById(R.id.editTextDisplayName);
         paswoordTextView = findViewById(R.id.editTextPaswoord);
 
         //logica buttons
@@ -70,10 +76,11 @@ public class InlogActivity extends AppCompatActivity {
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = emailTextView.getText().toString();
+                String email = usernameTextView.getText().toString();
                 String password = paswoordTextView.getText().toString();
 
                 if (!email.equals("") && !password.equals("")) {
+                    hideKeyBoard();
                     loginWithDisplayName(email, password);
 
                 }
@@ -148,15 +155,48 @@ public class InlogActivity extends AppCompatActivity {
 
             }
         });
+
+        //vanuit de registreerpagina komt een intent
+        Bundle bundle = getIntent().getExtras();
+        if(bundle.get("username")!= null){
+            usernameTextView.setText(bundle.get("username").toString());
+        }
+
+        if(savedInstanceState != null){
+            if(savedInstanceState.get("username")!= null){
+                usernameTextView.setText(savedInstanceState.get("username").toString());
+            }
+        }
+
+
+
+
+
+    }
+
+    private void hideKeyBoard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-
         updateUIAfterLogin(CurrentUser.getInstance());
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("activitylifecycle","onPause triggered");
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i("activitylifecycle","onResume triggered");
+        super.onResume();
     }
 
     /**
@@ -313,6 +353,27 @@ public class InlogActivity extends AppCompatActivity {
         }
     }
 
+
+    //volgende 2 methoden hebben als doel het onthouden van het email adres dat de gebruiker had
+    // invoked when the activity may be temporarily destroyed, save the instance state here
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.i("activitylifecycle","onSaveInstance triggered");
+        Log.i("activitylifecycle",usernameTextView.getText().toString()+" added");
+        outState.putString("username", usernameTextView.getText().toString());
+        // call superclass to save any view hierarchy
+        super.onSaveInstanceState(outState);
+    }
+
+    // This callback is called only when there is a saved instance that is previously saved by using
+    // onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
+    // other state here, possibly usable after onStart() has completed.
+    // The savedInstanceState Bundle is same as the one used in onCreate().
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.i("activitylifecycle","onRestoreInstanceState triggered");
+        usernameTextView.setText(savedInstanceState.getString("username"));
+    }
 
 
 
