@@ -80,6 +80,7 @@ public class InlogActivity extends AppCompatActivity {
                 String password = paswoordTextView.getText().toString();
 
                 if (!email.equals("") && !password.equals("")) {
+
                     hideKeyBoard();
                     loginWithDisplayName(email, password);
 
@@ -162,15 +163,9 @@ public class InlogActivity extends AppCompatActivity {
             usernameTextView.setText(bundle.get("username").toString());
         }
 
-        if(savedInstanceState != null){
-            if(savedInstanceState.get("username")!= null){
-                usernameTextView.setText(savedInstanceState.get("username").toString());
-            }
-        }
-
-
-
-
+        SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String userString = myPref.getString("username","");
+        if(!userString.equals("")){usernameTextView.setText(userString);}
 
     }
 
@@ -332,6 +327,7 @@ public class InlogActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         myEditor.putString("user", jsonUserPref.toString());
+        myEditor.putString("username", CurrentUser.getInstance().getDisplayName());
         myEditor.apply();
     }
     @Override
@@ -358,9 +354,11 @@ public class InlogActivity extends AppCompatActivity {
     // invoked when the activity may be temporarily destroyed, save the instance state here
     @Override
     public void onSaveInstanceState(Bundle outState) {
+
         Log.i("activitylifecycle","onSaveInstance triggered");
-        Log.i("activitylifecycle",usernameTextView.getText().toString()+" added");
         outState.putString("username", usernameTextView.getText().toString());
+        Log.i("activitylifecycle","username added");
+
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }
@@ -375,6 +373,9 @@ public class InlogActivity extends AppCompatActivity {
         usernameTextView.setText(savedInstanceState.getString("username"));
     }
 
-
-
+    @Override
+    protected void onDestroy() { // wordt gecalled als je scherm roteert
+        super.onDestroy();
+        Log.i("activitylifecycle","onDestroy triggered");
+    }
 }
