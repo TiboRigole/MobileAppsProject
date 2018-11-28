@@ -180,7 +180,6 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
      * als polyline geklikt wordt, verschijnt informatie in textview onder map
      */
     public void visualiseerRitten(){
-        //@TODO synchronisatie probleem oplossen, wachten op 2 requests totdat lijn getrokken mag worden, groot probleem, moeilijk op te lossen !!
 
         ArrayList<String> datums= new ArrayList<String>();
         for(Map.Entry<String, List<Rit>> entry : dateBasedRitten.entrySet()) {

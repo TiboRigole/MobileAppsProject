@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//@TODO ritten van andere met jou auto weergeven
+
 public class OtherDrivesActivity extends AppCompatActivity {
 
     CurrentUser currentUser;
@@ -60,7 +60,7 @@ public class OtherDrivesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_drives);
 
-        // TODO als user offline is, vraag ritten op uit ROOM database
+
         // ROOM
         application = (AnApplication) getApplication();
         mDatabase = application.getDatabase();

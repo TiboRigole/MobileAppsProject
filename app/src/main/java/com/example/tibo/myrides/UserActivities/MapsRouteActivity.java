@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -130,7 +131,7 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
         // prepare strings van source en destination om mee te geven in request
         source.replace(" ","+");
         destination.replace(" ","+");
-
+/*
         //REQUESTS
         // client om request te versturen
         OkHttpClient client = new OkHttpClient();
@@ -195,7 +196,7 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                     setDest(latDest, lngDest);
 
                     // wachten om map aan te vullen met polylines totdat beide coordinaten bekend zijn
-                    int wait=0;
+                    /*int wait=0;
                     while(wait==0) {
                         if (sourceLatCoord != 0 && sourceLngCoord != 0) {
                             initMap();
@@ -211,7 +212,10 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
 
 
             }
-        });
+        });*/
+
+        String[] args= {source, destination};
+        new askCoord().execute(args);
 
 
         // HANDLE CLICK ON POLYLINE
@@ -250,6 +254,106 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
         });
 
     }
+
+    public class askCoord extends AsyncTask<String, Void, Void>{
+
+        @Override
+        protected synchronized Void doInBackground(String... strings) {
+            System.out.println("meegegeven argumenten: "+ strings[0]+","+ strings[1]);
+
+            //REQUESTS
+            // client om request te versturen
+            OkHttpClient client = new OkHttpClient();
+            // SOURCE COORDINATES REQUEST
+            StringBuilder sourceURL = new StringBuilder();
+            sourceURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
+            sourceURL.append(strings[0]);
+            sourceURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
+            Request request = new Request.Builder()
+                    .url(sourceURL.toString())
+                    .get()
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    try {
+                        // retrieve coordinates from response json
+                        JSONObject jsonObject=new JSONObject(response.body().string());
+                        double latSource =(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
+                        double lngSource=(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
+                        setSource(latSource, lngSource);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+
+            // DESTINATION COORDINATES REQUEST
+            StringBuilder destURL = new StringBuilder();
+            destURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
+            destURL.append(strings[1]);
+            destURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
+            Request requestDest = new Request.Builder()
+                    .url(destURL.toString())
+                    .get()
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
+                    .build();
+            client.newCall(requestDest).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    try {
+                        // retrive coordinates from response JSON
+                        JSONObject jsonObject=new JSONObject(response.body().string());
+                        double latDest =(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
+                        double lngDest=(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
+                        setDest(latDest, lngDest);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+
+            while(sourceLatCoord==0 && destLatCoord==0){
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected synchronized void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            try {
+                System.out.println("initialiseer deze map hier keer");
+                initMap();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void setSource(double latSource, double lngSource){
         sourceLatCoord=latSource;
