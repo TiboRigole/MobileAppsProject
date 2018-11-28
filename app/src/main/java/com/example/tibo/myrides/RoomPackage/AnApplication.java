@@ -10,10 +10,12 @@ public class AnApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDatabase= Room.databaseBuilder(this, AppDatabase.class, "offline.db").build();
+        mDatabase= Room.databaseBuilder(this, AppDatabase.class, "ritten.db").build();
     }
 
-    public AppDatabase getmDatabase() {
+    public AppDatabase getDatabase() {
         return mDatabase;
     }
+
+
 }

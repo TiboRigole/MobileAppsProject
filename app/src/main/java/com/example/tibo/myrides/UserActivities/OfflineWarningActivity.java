@@ -1,7 +1,6 @@
 package com.example.tibo.myrides.UserActivities;
 
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,20 +11,27 @@ import com.example.tibo.myrides.R;
 public class OfflineWarningActivity extends AppCompatActivity {
 
 
-    Button goToSettings;
+    Button goToHomeAct;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_warning);
 
-        goToSettings= findViewById(R.id.goToNetworkConnection);
+        goToHomeAct = findViewById(R.id.goToHome);
 
-        goToSettings.setOnClickListener(new View.OnClickListener() {
+        goToHomeAct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settingsIntent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                startActivity(settingsIntent);
+                Intent goToHome= new Intent(OfflineWarningActivity.this, HomeActivity.class);
+                startActivity(goToHome);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
     }
 }

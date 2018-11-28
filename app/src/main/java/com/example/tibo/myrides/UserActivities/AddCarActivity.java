@@ -1,7 +1,10 @@
 package com.example.tibo.myrides.UserActivities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +29,7 @@ import com.example.tibo.myrides.Entities.Car;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -68,6 +72,7 @@ public class AddCarActivity extends AppCompatActivity {
     // init currentUser
     private CurrentUser currentUser;
 
+    private BroadcastReceiver br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +84,11 @@ public class AddCarActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         currentUser = CurrentUser.getInstance();
+
+        // broadcastreceiver
+        br= new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
 
 
         // DEF LAYOUT
@@ -213,5 +223,19 @@ public class AddCarActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(br);
     }
 }

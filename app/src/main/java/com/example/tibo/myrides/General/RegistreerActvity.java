@@ -59,6 +59,7 @@ public class RegistreerActvity extends AppCompatActivity {
     private Button registreerButton;
     private ImageView warningBevestiging;
     private ImageView correcteBevestiging;
+    private Button goBack;
 
 
     // INIT FIREBASE
@@ -83,8 +84,7 @@ public class RegistreerActvity extends AppCompatActivity {
         usernameText= findViewById(R.id.usernameEditView);
         paswoordLengteView=findViewById(R.id.counterpaslength);
         registreerButton = (Button) findViewById(R.id.registreerButton);
-
-
+        goBack= (Button) findViewById(R.id.goBackButton);
 
 
         //init images
@@ -105,6 +105,14 @@ public class RegistreerActvity extends AppCompatActivity {
 
 
 
+            }
+        });
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(RegistreerActvity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -257,6 +265,12 @@ public class RegistreerActvity extends AppCompatActivity {
         Intent intent = new Intent(this, InlogActivity.class);
         intent.putExtra("username", usernameText.getText().toString());
         startActivity(intent);
+    }
 
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
     }
 }

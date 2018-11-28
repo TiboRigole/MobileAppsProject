@@ -6,6 +6,9 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Entity
 public class RitLocal {
 
@@ -26,6 +29,27 @@ public class RitLocal {
     private String eigenaarAuto;
     // YYYY-MM-DD
     private String date;
+
+    public RitLocal() {
+
+    }
+
+    public RitLocal(Map<String,Object> data) {
+        this.date = (String) data.get("date");
+        this.uitvoerder = (String) data.get("uitvoerder");
+        this.eigenaarAuto = (String) data.get("eigenaarAuto");
+        this.vertrekpunt = (String) data.get("vertrekpunt");
+        this.bestemming = (String) data.get("bestemming");
+        this.nummerplaat = (String) data.get("nummerplaat");
+        this.afstand = (double) data.get("afstand");
+        this.prijsNafte = (double) data.get("prijsNafte");
+        this.totalePrijs = (double) data.get("totalePrijs");
+        this.heenenterug = (boolean) data.get("heenenterug");
+        HashMap<String, Double> vertrekHash= (HashMap<String, Double>) data.get("vertrekCoord");
+        HashMap<String, Double> eindHash= (HashMap<String, Double>) data.get("eindCoord");
+        this.vertrekCoord= new LatLng (vertrekHash.get("latitude"), vertrekHash.get("longitude"));
+        this.eindCoord=new LatLng (eindHash.get("latitude"), eindHash.get("longitude"));
+    }
 
 
     public int getRitID() {
@@ -131,4 +155,6 @@ public class RitLocal {
     public void setDate(String date) {
         this.date = date;
     }
+
+
 }

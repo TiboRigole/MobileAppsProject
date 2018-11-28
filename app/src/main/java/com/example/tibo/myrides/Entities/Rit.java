@@ -1,6 +1,7 @@
 package com.example.tibo.myrides.Entities;
 
 
+import com.example.tibo.myrides.RoomPackage.RitLocal;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.HashMap;
@@ -58,6 +59,21 @@ public class Rit {
         this.uitvoerder = uitvoerder;
         this.eigenaarAuto = eigenaarAuto;
         this.date = date;
+    }
+
+    public Rit(RitLocal ritLocal) {
+        this.vertrekpunt = ritLocal.getVertrekpunt();
+        this.bestemming = ritLocal.getBestemming();
+        this.vertrekCoord = ritLocal.getVertrekCoord();
+        this.eindCoord = ritLocal.getEindCoord();
+        this.nummerplaat = ritLocal.getNummerplaat();
+        this.afstand = ritLocal.getAfstand();
+        this.prijsNafte = ritLocal.getPrijsNafte();
+        this.totalePrijs = ritLocal.getTotalePrijs();
+        this.heenenterug = ritLocal.isHeenenterug();
+        this.uitvoerder = ritLocal.getUitvoerder();
+        this.eigenaarAuto = ritLocal.getEigenaarAuto();
+        this.date = ritLocal.getDate();
     }
 
     public LatLng getVertrekCoord() {

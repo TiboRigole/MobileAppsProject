@@ -4,8 +4,10 @@ package com.example.tibo.myrides.General;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
+import com.example.tibo.myrides.Entities.Rit;
 import com.example.tibo.myrides.R;
+import com.example.tibo.myrides.RoomPackage.AnApplication;
+import com.example.tibo.myrides.RoomPackage.AppDatabase;
+import com.example.tibo.myrides.RoomPackage.RitLocal;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -23,8 +29,15 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -36,9 +49,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InlogActivity extends AppCompatActivity {
 
+    FirebaseFirestore db;
+
+    // ROOM
+    AnApplication application;
+    static AppDatabase mDatabase;
 
 
     //manager voor facebook login
@@ -52,6 +72,8 @@ public class InlogActivity extends AppCompatActivity {
     //login button
     private Button logInButton;
 
+    private Button goBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +82,18 @@ public class InlogActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_inlog);
 
+        db=FirebaseFirestore.getInstance();
 
+        // ROOM
+        application = (AnApplication) getApplication();
+        mDatabase = application.getDatabase();
 
         //GUI
         //init buttons
         fbloginButton = findViewById(R.id.fb_login_button);
         logInButton = (Button) findViewById(R.id.logInButton);
+        goBack= (Button) findViewById(R.id.goBackButton);
+
 
         //init textviews
         usernameTextView = findViewById(R.id.editTextDisplayName);
@@ -89,6 +117,14 @@ public class InlogActivity extends AppCompatActivity {
             }
         });
 
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(InlogActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         //FACEBOOK
@@ -180,7 +216,6 @@ public class InlogActivity extends AppCompatActivity {
         super.onStart();
         AccessToken accessToken= AccessToken.getCurrentAccessToken();
         if(accessToken!=null && !accessToken.isExpired()){
-            //TODO set username en email van currentuser
             GraphRequest request = GraphRequest.newMeRequest(
                     accessToken,
                     new GraphRequest.GraphJSONObjectCallback() {
@@ -190,14 +225,17 @@ public class InlogActivity extends AppCompatActivity {
 
                             // Application code
                             try {
-                                String email = object.getString("email");
-                                String displayName = object.getString("name"); // 01/31/1980 format
+                                //object zal null zijn als er geen connectie met internet is
+                                if(object!=null) {
+                                    String email = object.getString("email");
+                                    String displayName = object.getString("name"); // 01/31/1980 format
 
 
-                                CurrentUser.getInstance().setDisplayName(displayName);
-                                CurrentUser.getInstance().setEmail(email);
-                                CurrentUser.getInstance().setLoggedIn(true);
-                                updateUIAfterLogin(CurrentUser.getInstance());
+                                    CurrentUser.getInstance().setDisplayName(displayName);
+                                    CurrentUser.getInstance().setEmail(email);
+                                    CurrentUser.getInstance().setLoggedIn(true);
+                                    updateUIAfterLogin(CurrentUser.getInstance());
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -211,6 +249,7 @@ public class InlogActivity extends AppCompatActivity {
 
         }
         else{
+            LoginManager.getInstance().logOut();
             updateUIAfterLogin(CurrentUser.getInstance());
         }
 
@@ -364,7 +403,27 @@ public class InlogActivity extends AppCompatActivity {
         myEditor.putString("user", jsonUserPref.toString());
         myEditor.putString("username", CurrentUser.getInstance().getDisplayName());
         myEditor.apply();
-        //TODO hier moeten alle ritten opgevraagd worden die bij deze user behoren en opgeslaan worden in ROOM database
+
+        ArrayList<RitLocal> ritten= new ArrayList<RitLocal>();
+        Task<QuerySnapshot> queryRitten= db.collection("ritten").whereEqualTo("eigenaarAuto", CurrentUser.getInstance().getEmail()).get();
+        queryRitten.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                    ritten.add(new RitLocal(queryDocumentSnapshot.getData()));
+                }
+
+                // TODO sla alle ritten in arraylist op in ROOM database,  verwijder vorige
+                new ritUpdate().execute(ritten);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -374,6 +433,18 @@ public class InlogActivity extends AppCompatActivity {
         // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+
+    private static class ritUpdate extends AsyncTask<List<RitLocal>, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(List<RitLocal>... lists) {
+            mDatabase.ritDao().deleteAllRitten();
+            mDatabase.ritDao().insertRitten(lists[0]);
+            return null;
+        }
+    }
+
 
     /**
      * als er reeds een user is ingelogd dient de loginpagina niet weergegeven te worden
@@ -414,5 +485,13 @@ public class InlogActivity extends AppCompatActivity {
     protected void onDestroy() { // wordt gecalled als je scherm roteert
         super.onDestroy();
         Log.i("activitylifecycle","onDestroy triggered");
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
     }
 }

@@ -1,14 +1,18 @@
 package com.example.tibo.myrides.General;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 
 
@@ -21,6 +25,9 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+
+
+
 
         TextView aboutTxt = (TextView)findViewById(R.id.txtAbout);
 
@@ -44,6 +51,17 @@ public class AboutActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        }
+    }
+
+
+
+
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
         }
     }
 }

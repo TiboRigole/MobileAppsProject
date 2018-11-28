@@ -1,5 +1,8 @@
 package com.example.tibo.myrides.UserActivities;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 
 public class AccountActivity extends AppCompatActivity {
@@ -19,6 +23,7 @@ public class AccountActivity extends AppCompatActivity {
     TextView email;
     TextView loggedIn;
     DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +44,7 @@ public class AccountActivity extends AppCompatActivity {
         CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.navigationzijkant_view);
         navigationView.setCheckedItem(R.id.nav_info);
         navigationView.initSelect(this, mDrawerLayout);
+
 
 
 
@@ -67,4 +73,13 @@ public class AccountActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+       if(false){
+           super.onBackPressed();
+       }
+    }
+
+
 }

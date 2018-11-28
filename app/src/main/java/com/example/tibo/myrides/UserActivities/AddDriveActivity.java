@@ -1,7 +1,10 @@
 package com.example.tibo.myrides.UserActivities;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,6 +50,9 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
     private AutoCompleteTextView destination;
     private Button checkRoutes;
 
+
+    private BroadcastReceiver br;
+
     // adapter nodig om textveldjes automatisch aan te vullen
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
 
@@ -71,6 +78,10 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         setContentView(R.layout.activity_add_drive);
         currentUser = CurrentUser.getInstance();
 
+        // broadcastreceiver
+        br= new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
 
         db = FirebaseFirestore.getInstance();
 
@@ -215,5 +226,19 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(br);
     }
 }

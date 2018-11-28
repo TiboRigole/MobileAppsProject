@@ -6,6 +6,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".RoomPackage.AnApplication"
         android:icon="@mipmap/logoappyellow"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logoappyellow"

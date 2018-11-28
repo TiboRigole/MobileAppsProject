@@ -95,8 +95,12 @@ public class CustomNavigationView extends NavigationView {
                         }
 
                         if (menuItem.getItemId() == R.id.nav_my_drives) {
-
-                            context.startActivity(new Intent(context, MyDrivesActivity.class));
+                            if(currentUser.isLoggedIn()) {
+                                context.startActivity(new Intent(context, MyDrivesActivity.class));
+                            }
+                            else{
+                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
+                            }
 
                         }
 

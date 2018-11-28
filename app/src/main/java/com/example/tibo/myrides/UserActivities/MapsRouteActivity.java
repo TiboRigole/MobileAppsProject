@@ -1,12 +1,16 @@
 package com.example.tibo.myrides.UserActivities;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.HelperPackage.PassPolyline;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -65,6 +69,8 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
     // wanneer op polyline geklikt wordt, wordt selectedDistance geset
     private double selectedDistance;
 
+    private BroadcastReceiver br;
+
 
     // ENKEL DOORGEVEN, HIER WORDT NIETS MEE GEDAAN
     // nummerplaat van auto waarmee rit wordt gedaan
@@ -83,6 +89,11 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
         // def afstanden
         distances=new HashMap<String, Double>();
 
+
+        // broadcastreceiver
+        br= new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
 
         mainHandler= new Handler(getApplicationContext().getMainLooper());
 
@@ -476,4 +487,19 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(br);
+    }
+
+
 }

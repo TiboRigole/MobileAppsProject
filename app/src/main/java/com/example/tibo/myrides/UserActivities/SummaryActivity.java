@@ -1,8 +1,11 @@
 package com.example.tibo.myrides.UserActivities;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.Entities.Rit;
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.HelperPackage.PassPolyline;
 import com.example.tibo.myrides.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -89,6 +93,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     // INIT FIREBASE
     private FirebaseFirestore db;
 
+    private BroadcastReceiver br;
 
     private CurrentUser currentUser;
 
@@ -100,6 +105,11 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary);
+
+        // broadcastreceiver
+        br= new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
 
         // DEF FIREBASE
         currentUser = CurrentUser.getInstance();
@@ -333,11 +343,19 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        this.unregisterReceiver(br);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
     }
 }

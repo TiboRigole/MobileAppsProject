@@ -63,10 +63,12 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     public void checkConnection(final Context context){
 
         if(isOnline(context)){
-
             Toast.makeText(context, "You are connected to Internet", Toast.LENGTH_SHORT).show();
+            if(!CurrentUser.getInstance().getEmail().equals("") && !CurrentUser.getInstance().getDisplayName().equals("")){
+                CurrentUser.getInstance().setLoggedIn(true);
+            }
         }
-        else{
+        else {
 
             SharedPreferences myPref= PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
             String userString= myPref.getString("user", "");

@@ -1,7 +1,10 @@
 package com.example.tibo.myrides.UserActivities;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +25,7 @@ import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.Entities.Rit;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
+import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -74,6 +78,8 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
     private FirebaseFirestore db;
     private CurrentUser currentUser;
 
+    private BroadcastReceiver br;
+
     // OPSLAG
     // link tussen Polyline en Rit object
     private HashMap<Polyline, Rit> polylineRitHashMap;
@@ -89,12 +95,17 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_drive);
 
-        // TODO als user offline is, vraag ritten op uit ROOM database
+
 
         // DEF FIREBASE
         currentUser = CurrentUser.getInstance();
         db = FirebaseFirestore.getInstance();
 
+
+        // broadcastreceiver
+        br= new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
 
         // DEF OPSLAG
         dateBasedRitten= new HashMap<>();
@@ -258,11 +269,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         super.onResume();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
+
 
     @Override
     public void onLowMemory() {
@@ -280,5 +287,18 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(false){
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(br);
     }
 }
