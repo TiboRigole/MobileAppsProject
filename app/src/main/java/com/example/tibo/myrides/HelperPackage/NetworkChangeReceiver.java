@@ -10,7 +10,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -20,14 +19,9 @@ import android.widget.Toast;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
-import com.facebook.AccessToken;
-import com.facebook.login.LoginManager;
-import com.facebook.places.model.CurrentPlaceRequestParams;
-import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 

@@ -89,6 +89,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_drive);
 
+        // TODO als user offline is, vraag ritten op uit ROOM database
 
         // DEF FIREBASE
         currentUser = CurrentUser.getInstance();

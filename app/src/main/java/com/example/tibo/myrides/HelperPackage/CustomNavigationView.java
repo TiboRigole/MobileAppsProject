@@ -70,29 +70,34 @@ public class CustomNavigationView extends NavigationView {
                         }
 
                         if (menuItem.getItemId() == R.id.nav_add_drive) {
-                            context.startActivity(new Intent(context, AddDriveActivity.class));
+                            if(currentUser.isLoggedIn()) {
+                                context.startActivity(new Intent(context, AddDriveActivity.class));
+                            }
+                            else{
+                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
+                            }
                         }
 
                         if (menuItem.getItemId() == R.id.nav_add_car) {
-                            context.startActivity(new Intent(context, AddCarActivity.class));
+                            if(currentUser.isLoggedIn()) {
+                                context.startActivity(new Intent(context, AddCarActivity.class));
+                            }
+                            else{
+                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
+                            }
+
                         }
 
                         if (menuItem.getItemId() == R.id.nav_other_drives) {
-                            if(currentUser.isLoggedIn()) {
-                                context.startActivity(new Intent(context, OtherDrivesActivity.class));
-                            }
-                            else{
-                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
-                            }
+
+                            context.startActivity(new Intent(context, OtherDrivesActivity.class));
+
                         }
 
                         if (menuItem.getItemId() == R.id.nav_my_drives) {
-                            if(currentUser.isLoggedIn()) {
-                                context.startActivity(new Intent(context, MyDrivesActivity.class));
-                            }
-                            else{
-                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
-                            }
+
+                            context.startActivity(new Intent(context, MyDrivesActivity.class));
+
                         }
 
                         return true;

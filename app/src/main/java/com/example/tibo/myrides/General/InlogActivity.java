@@ -329,6 +329,7 @@ public class InlogActivity extends AppCompatActivity {
         myEditor.putString("user", jsonUserPref.toString());
         myEditor.putString("username", CurrentUser.getInstance().getDisplayName());
         myEditor.apply();
+        //TODO hier moeten alle ritten opgevraagd worden die bij deze user behoren en opgeslaan worden in ROOM database
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
