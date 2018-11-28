@@ -57,6 +57,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // DEF FIREBASE
         currentUser = CurrentUser.getInstance();
+        System.out.println("home act:" + currentUser.getDisplayName()+currentUser.getEmail());
         db = FirebaseFirestore.getInstance();
 
         // DEF LAYOUT

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.HomeActivity;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -177,8 +178,42 @@ public class InlogActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        AccessToken accessToken= AccessToken.getCurrentAccessToken();
+        if(accessToken!=null && !accessToken.isExpired()){
+            //TODO set username en email van currentuser
+            GraphRequest request = GraphRequest.newMeRequest(
+                    accessToken,
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.v("LoginActivity", response.toString());
 
-        updateUIAfterLogin(CurrentUser.getInstance());
+                            // Application code
+                            try {
+                                String email = object.getString("email");
+                                String displayName = object.getString("name"); // 01/31/1980 format
+
+
+                                CurrentUser.getInstance().setDisplayName(displayName);
+                                CurrentUser.getInstance().setEmail(email);
+                                CurrentUser.getInstance().setLoggedIn(true);
+                                updateUIAfterLogin(CurrentUser.getInstance());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,name,email,gender,birthday");
+            request.setParameters(parameters);
+            request.executeAsync();
+
+        }
+        else{
+            updateUIAfterLogin(CurrentUser.getInstance());
+        }
+
 
     }
 
@@ -348,6 +383,7 @@ public class InlogActivity extends AppCompatActivity {
         if (user.isLoggedIn()) {
             startActivity(new Intent(InlogActivity.this, HomeActivity.class));
         }
+
     }
 
 
