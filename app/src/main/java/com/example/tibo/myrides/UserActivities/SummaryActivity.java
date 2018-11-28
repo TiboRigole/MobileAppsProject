@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
@@ -88,6 +90,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     private TextView nummerPlaatTextView;
     private CheckBox retour;
     private Button save;
+    private Button annuleer;
 
 
     // INIT FIREBASE
@@ -137,6 +140,7 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         retour=(CheckBox) findViewById(R.id.retour);
         save= (Button)findViewById(R.id.save);
 
+        annuleer=findViewById(R.id.annuleer);
 
 
         // LOGIC BUTTONS AND WIDGETS
@@ -159,6 +163,14 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
 
         });
 
+
+        annuleer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(SummaryActivity.this, HomeActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         // DEF MINIMAP
@@ -310,7 +322,8 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
-        gmap.setMinZoomPreference(9);
+
+       // gmap.setMinZoomPreference(9);
         gmap.addMarker(new MarkerOptions().position(sourceLatLng).title(start).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         gmap.addMarker(new MarkerOptions().position(destLatLng).title(einde).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
@@ -327,7 +340,18 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
                 .pattern(pattern)
         );
 
-        gmap.moveCamera(CameraUpdateFactory.newLatLng(center));
+
+        LatLngBounds.Builder builder= new LatLngBounds.Builder();
+        builder.include(sourceLatLng);
+        builder.include(destLatLng);
+        LatLngBounds bounds=builder.build();
+
+        gmap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                gmap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+            }
+        });
 
 
 

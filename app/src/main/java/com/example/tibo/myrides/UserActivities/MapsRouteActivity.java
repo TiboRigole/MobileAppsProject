@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
@@ -131,88 +132,6 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
         // prepare strings van source en destination om mee te geven in request
         source.replace(" ","+");
         destination.replace(" ","+");
-/*
-        //REQUESTS
-        // client om request te versturen
-        OkHttpClient client = new OkHttpClient();
-
-        // SOURCE COORDINATES REQUEST
-        StringBuilder sourceURL = new StringBuilder();
-        sourceURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
-        sourceURL.append(source);
-        sourceURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
-        Request request = new Request.Builder()
-                .url(sourceURL.toString())
-                .get()
-                .addHeader("cache-control", "no-cache")
-                .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    // retrieve coordinates from response json
-                    JSONObject jsonObject=new JSONObject(response.body().string());
-                    double latSource =(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
-                    double lngSource=(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
-                    setSource(latSource, lngSource);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        });
-
-        // DESTINATION COORDINATES REQUEST
-        StringBuilder destURL = new StringBuilder();
-        destURL.append("https://api.mapbox.com/geocoding/v5/mapbox.places/");
-        destURL.append(destination);
-        destURL.append(".json?access_token=pk.eyJ1IjoiYWFyb25oYWxsYWVydCIsImEiOiJjam4zbW00OHMyMDFlM3dwbHNmeTZubHU2In0.p4W7257HvvNNPLZukiBTJg&limit=1");
-        Request requestDest = new Request.Builder()
-                .url(destURL.toString())
-                .get()
-                .addHeader("cache-control", "no-cache")
-                .addHeader("Postman-Token", "b3c2f59e-1217-4fff-9ce3-d28030cc397f")
-                .build();
-        client.newCall(requestDest).enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    // retrive coordinates from response JSON
-                    JSONObject jsonObject=new JSONObject(response.body().string());
-                    double latDest =(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(1);
-                    double lngDest=(double)jsonObject.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates").get(0);
-                    setDest(latDest, lngDest);
-
-                    // wachten om map aan te vullen met polylines totdat beide coordinaten bekend zijn
-                    /*int wait=0;
-                    while(wait==0) {
-                        if (sourceLatCoord != 0 && sourceLngCoord != 0) {
-                            initMap();
-                            wait=1;
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        });*/
 
         String[] args= {source, destination};
         new askCoord().execute(args);
@@ -386,7 +305,13 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                     center=computeCentroid(points);
                     mMap.addMarker(new MarkerOptions().position(sourceLatLng).title(source).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                     mMap.addMarker(new MarkerOptions().position(destLatLng).title(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 9));
+
+                    LatLngBounds.Builder builder= new LatLngBounds.Builder();
+                    builder.include(sourceLatLng);
+                    builder.include(destLatLng);
+                    LatLngBounds bounds=builder.build();
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
                 }
             };
             mainHandler.post(initSourceMap);
