@@ -61,7 +61,7 @@ public class CustomNavigationView extends NavigationView {
                             //log de user uit
                             currentUser.logout();
                             //log uit van facebook
-                            LoginManager.getInstance().logOut();
+                            currentUser.disconnectFromFacebook();
                             //ga terug naar de mainActivity
                             context.startActivity(new Intent(context, MainActivity.class));
                         }

@@ -11,13 +11,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.example.tibo.myrides.Entities.CurrentUser;
+import com.example.tibo.myrides.HelperPackage.MyService;
 import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
-import com.example.tibo.myrides.UserActivities.HomeActivity;
-import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,12 +22,16 @@ public class MainActivity extends AppCompatActivity {
     private Button inlogButton;
     private Button registreerButton;
     private BroadcastReceiver br;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+
+        startService(new Intent(this, MyService.class));
         // broadcastreceiver
         br= new NetworkChangeReceiver();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -71,12 +72,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(br);
+        System.out.println("stop service");
+        stopService(new Intent(this, MyService.class));
     }
 
 

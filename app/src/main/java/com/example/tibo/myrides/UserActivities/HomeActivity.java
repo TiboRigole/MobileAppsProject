@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.General.MainActivity;
 import com.example.tibo.myrides.HelperPackage.CustomNavigationView;
+import com.example.tibo.myrides.HelperPackage.MyService;
 import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 import com.facebook.login.LoginManager;
@@ -53,6 +54,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        stopService(new Intent(this, MyService.class));
 
 
         // DEF FIREBASE

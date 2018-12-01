@@ -353,8 +353,6 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-
-
     }
 
     @Override
@@ -363,11 +361,18 @@ public class SummaryActivity extends AppCompatActivity implements OnMapReadyCall
         super.onResume();
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.unregisterReceiver(br);
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-        this.unregisterReceiver(br);
     }
 
     @Override

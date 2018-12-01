@@ -525,9 +525,14 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        this.unregisterReceiver(br);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(br);
     }
 
 

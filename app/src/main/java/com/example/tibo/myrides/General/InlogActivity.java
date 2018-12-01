@@ -136,7 +136,7 @@ public class InlogActivity extends AppCompatActivity {
         Log.d("FBLOGIN","readpermissions set");
 
         // inlog callback na button press
-        fbloginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d("FBLOGIN", "facebook:onSuccess: " + loginResult);
@@ -249,7 +249,7 @@ public class InlogActivity extends AppCompatActivity {
 
         }
         else{
-            LoginManager.getInstance().logOut();
+            CurrentUser.getInstance().disconnectFromFacebook();
             updateUIAfterLogin(CurrentUser.getInstance());
         }
 

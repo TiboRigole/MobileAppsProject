@@ -235,10 +235,14 @@ public class AddDriveActivity extends AppCompatActivity implements GoogleApiClie
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.unregisterReceiver(br);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(br);
     }
 }

@@ -19,6 +19,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI" />
 
+        <service android:enabled="true" android:name=".HelperPackage.MyService" />
+
         <receiver android:name=".HelperPackage.NetworkChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
