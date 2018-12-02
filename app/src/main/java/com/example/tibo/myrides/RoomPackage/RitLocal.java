@@ -29,6 +29,7 @@ public class RitLocal {
     private String eigenaarAuto;
     // YYYY-MM-DD
     private String date;
+    private boolean betaald;
 
     public RitLocal() {
 
@@ -49,8 +50,16 @@ public class RitLocal {
         HashMap<String, Double> eindHash= (HashMap<String, Double>) data.get("eindCoord");
         this.vertrekCoord= new LatLng (vertrekHash.get("latitude"), vertrekHash.get("longitude"));
         this.eindCoord=new LatLng (eindHash.get("latitude"), eindHash.get("longitude"));
+        this.betaald= (boolean) data.get("betaald");
     }
 
+    public boolean isBetaald() {
+        return betaald;
+    }
+
+    public void setBetaald(boolean betaald) {
+        this.betaald = betaald;
+    }
 
     public int getRitID() {
         return ritID;

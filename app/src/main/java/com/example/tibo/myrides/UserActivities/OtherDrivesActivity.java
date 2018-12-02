@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.Entities.Rit;
@@ -28,6 +29,8 @@ import com.example.tibo.myrides.RoomPackage.RitLocal;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -175,7 +178,7 @@ public class OtherDrivesActivity extends AppCompatActivity {
             received.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO verwijder alle ritten
+                    Toast.makeText(application, "You're offline, can't update database", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -203,7 +206,7 @@ public class OtherDrivesActivity extends AppCompatActivity {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
                 for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                    if(!queryDocumentSnapshot.get("uitvoerder").equals(CurrentUser.getInstance().getEmail())) {
+                    if(!queryDocumentSnapshot.get("uitvoerder").equals(CurrentUser.getInstance().getEmail()) && queryDocumentSnapshot.get("betaald").equals(false)) {
                         ritten.add(new Rit(queryDocumentSnapshot.getData()));
                     }
                 }
@@ -270,7 +273,27 @@ public class OtherDrivesActivity extends AppCompatActivity {
                     received.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // TODO verwijder alle ritten
+                            // zet alle ritten van gebruiker op betaald
+                            String emailUitvoerder= stringDoubleEntry.getKey();
+                            CollectionReference rittenref= db.collection("ritten");
+                            rittenref.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                        rittenref.document(queryDocumentSnapshot.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                if(documentSnapshot.get("uitvoerder").equals(emailUitvoerder)){
+                                                    rittenref.document(documentSnapshot.getId()).update("betaald", true);
+                                                }
+                                            }
+                                        });
+
+                                    }
+                                }
+                            });
+
+                            tablePrices.removeView(trContenti);
                         }
                     });
 

@@ -23,6 +23,7 @@ public class Rit {
     private boolean heenenterug;
     private String uitvoerder;
     private String eigenaarAuto;
+    private boolean betaald;
     // YYYY-MM-DD
     private String date;
 
@@ -43,7 +44,7 @@ public class Rit {
         HashMap<String, Double> eindHash= (HashMap<String, Double>) data.get("eindCoord");
         this.vertrekCoord= new LatLng (vertrekHash.get("latitude"), vertrekHash.get("longitude"));
         this.eindCoord=new LatLng (eindHash.get("latitude"), eindHash.get("longitude"));
-
+        this.betaald= (boolean) data.get("betaald");
     }
 
     public Rit(String date, String uitvoerder, String eigenaarAuto, String vertrekpunt, String bestemming, String nummerplaat, double afstand, double prijsNafte, double totalePrijs, boolean heenenterug, LatLng vertrekCoord, LatLng eindCoord) {
@@ -59,6 +60,7 @@ public class Rit {
         this.uitvoerder = uitvoerder;
         this.eigenaarAuto = eigenaarAuto;
         this.date = date;
+        this.betaald=false;
     }
 
     public Rit(RitLocal ritLocal) {
@@ -74,6 +76,7 @@ public class Rit {
         this.uitvoerder = ritLocal.getUitvoerder();
         this.eigenaarAuto = ritLocal.getEigenaarAuto();
         this.date = ritLocal.getDate();
+        this.betaald= ritLocal.isBetaald();
     }
 
     public LatLng getVertrekCoord() {
@@ -116,6 +119,13 @@ public class Rit {
         this.date = date;
     }
 
+    public boolean isBetaald() {
+        return betaald;
+    }
+
+    public void setBetaald(boolean betaald) {
+        this.betaald = betaald;
+    }
 
     public String getEigenaarAuto() {
         return eigenaarAuto;
