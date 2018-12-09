@@ -71,7 +71,7 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
     // wanneer op polyline geklikt wordt, wordt selectedDistance geset
     private double selectedDistance;
 
-    private BroadcastReceiver br;
+
 
 
     // ENKEL DOORGEVEN, HIER WORDT NIETS MEE GEDAAN
@@ -90,12 +90,6 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
         lines= new ArrayList<>();
         // def afstanden
         distances=new HashMap<String, Double>();
-
-
-        // broadcastreceiver
-        br= new NetworkChangeReceiver();
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        this.registerReceiver(br, filter);
 
         mainHandler= new Handler(getApplicationContext().getMainLooper());
 
@@ -527,7 +521,6 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onStop() {
         super.onStop();
-        this.unregisterReceiver(br);
     }
 
     @Override
