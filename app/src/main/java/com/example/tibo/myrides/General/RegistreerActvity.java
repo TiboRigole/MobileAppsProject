@@ -74,7 +74,7 @@ public class RegistreerActvity extends AppCompatActivity {
 
 
         // DEF FIREBASE
-        FirebaseApp.initializeApp(this);
+        //FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
 
 

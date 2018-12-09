@@ -44,6 +44,7 @@ public class RegistreerActvityTest {
         paswoordText.setText("VeiligPW1234");
         bevestigPaswoordText.setText("VeiligPW1234");
 
+        // de paswoorden zijn gelijk, we moeten dus kunnen registreren
         Assert.assertTrue(registreerButton.isEnabled());
     }
 
