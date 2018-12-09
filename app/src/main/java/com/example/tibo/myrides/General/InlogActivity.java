@@ -305,7 +305,9 @@ public class InlogActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Response response) throws IOException {
 
+                    //deze methode is enkel voor de JUnit test geschreven
                     handleLoginResponse(response);
+
                     System.out.println("response code "+ response.code());
                     if(response.code()==200) {
                         // login ok, set current user local

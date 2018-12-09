@@ -253,7 +253,7 @@ public class MyDrivesActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onPolylineClick(Polyline polyline) {
                 Rit r= polylineRitHashMap.get(polyline);
-                routeInfo.setText(r.toString());
+                routeInfo.setText(r.toBeautifulString());
             }
         });
 

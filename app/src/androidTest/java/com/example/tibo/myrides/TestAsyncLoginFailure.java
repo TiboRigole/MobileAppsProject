@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.tibo.myrides.LoginTestFlavor.LoginTestActivity;
+import com.example.tibo.myrides.TestingClasses.LoginTestActivity;
 import com.squareup.okhttp.Response;
 
 import org.junit.Rule;
@@ -56,9 +56,9 @@ public class TestAsyncLoginFailure {
         testActivity.setLoginCallback(new LoginTestActivity.Callback() {
             @Override
             public void onHandleResponseCalled(Response response) {
-                Log.v("androidTest", "onHandleResponseCalled in thread " + Thread.currentThread().getId());
-                Log.v("androidTest", "we zitten hier");
+                Log.v("androidTest", "onHandleResponseCalled in thread " + Thread.currentThread().getId());;
 
+                //als de logincode geen 200 is, dan hebben we geen succesvolle login.
                 assertTrue(response.code() != 200);
                 synchronized (syncObject){
                     syncObject.notify();

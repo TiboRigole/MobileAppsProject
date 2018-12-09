@@ -1,18 +1,14 @@
 package com.example.tibo.myrides;
 
-import android.content.Context;
-import android.os.RemoteException;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.tibo.myrides.LoginTestFlavor.LoginTestActivity;
+import com.example.tibo.myrides.TestingClasses.LoginTestActivity;
 import com.squareup.okhttp.Response;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

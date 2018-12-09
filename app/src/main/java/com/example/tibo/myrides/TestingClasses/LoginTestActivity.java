@@ -1,9 +1,9 @@
-package com.example.tibo.myrides.LoginTestFlavor;
+package com.example.tibo.myrides.TestingClasses;
 
 import com.example.tibo.myrides.General.InlogActivity;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Response;
 
+//deze activity bestaat enkel voor het runnen van de JUnit test
 public class LoginTestActivity extends InlogActivity {
 
     private Callback mCallback;

@@ -111,6 +111,25 @@ public class Rit {
                 '}';
     }
 
+    public String toBeautifulString(){
+
+        String slot =null;
+        if(heenenterug){
+            slot = "heen en terug";
+        }
+        else{slot =" dit is een enkele rit";}
+
+        return "van "+vertrekpunt+" naar "+bestemming+ '\n'+
+                "met auto "+nummerplaat+'\n'+
+                "totale afstand: "+afstand+" km"+'\n'+
+                "aan "+prijsNafte+ "€/l"+'\n'+
+                "totaalbedrag: "+totalePrijs + "€"+'\n'+
+                "bestuurder: "+uitvoerder+'\n'+
+                "te betalen aan: "+eigenaarAuto+ '\n'+
+                "gereden op :" +date + '\n' + slot;
+
+    }
+
     public String getDate() {
         return date;
     }
