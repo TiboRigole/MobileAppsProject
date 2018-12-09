@@ -28,12 +28,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.JsonArray;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -245,7 +247,7 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
                 }
             });
 
-            while(sourceLatCoord==0 && destLatCoord==0){
+            while(sourceLatCoord==0 || destLatCoord==0 || sourceLngCoord==0 || destLngCoord==0){
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -269,11 +271,13 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
 
 
     public void setSource(double latSource, double lngSource){
+        System.out.println("SOURCE "+ latSource +", "+lngSource );
         sourceLatCoord=latSource;
         sourceLngCoord= lngSource;
     }
 
     public void setDest(double latDest, double lngDest){
+        System.out.println("DESTINATION "+ latDest +", "+lngDest );
         destLatCoord=latDest;
         destLngCoord= lngDest;
     }
@@ -456,50 +460,53 @@ public class MapsRouteActivity extends FragmentActivity implements OnMapReadyCal
             public void onResponse(Response response) throws IOException {
                 try {
                     JSONObject jsonObject= new JSONObject(response.body().string());
-                    for (int i = 0; i < jsonObject.getJSONArray("routes").length(); i++) {
-                        JSONObject geoJsonData1= new JSONObject(jsonObject.getJSONArray("routes").getJSONObject(i).getJSONObject("geometry").toString());
-                        System.out.println(geoJsonData1.toString());
+                    System.out.println(jsonObject.toString());
+                    JSONArray routes= jsonObject.getJSONArray("routes");
+                    if(routes!=null) {
+                        for (int i = 0; i < routes.length(); i++) {
+                            JSONObject geoJsonData1 = new JSONObject(routes.getJSONObject(i).getJSONObject("geometry").toString());
+                            System.out.println(geoJsonData1.toString());
 
-                        Runnable myRunnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                GeoJsonLayer layer= new GeoJsonLayer(mMap, geoJsonData1);
-                                ArrayList<LatLng> points = new ArrayList<>();
-                                try {
-                                    for (int i1 = 0; i1 < geoJsonData1.getJSONArray("coordinates").length(); i1++) {
-                                        double lng=(double)geoJsonData1.getJSONArray("coordinates").getJSONArray(i1).get(0);
-                                        double lat=(double)geoJsonData1.getJSONArray("coordinates").getJSONArray(i1).get(1);
-                                        LatLng pointi= new LatLng(lat, lng);
-                                        points.add(pointi);
+                            Runnable myRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    GeoJsonLayer layer = new GeoJsonLayer(mMap, geoJsonData1);
+                                    ArrayList<LatLng> points = new ArrayList<>();
+                                    try {
+                                        for (int i1 = 0; i1 < geoJsonData1.getJSONArray("coordinates").length(); i1++) {
+                                            double lng = (double) geoJsonData1.getJSONArray("coordinates").getJSONArray(i1).get(0);
+                                            double lat = (double) geoJsonData1.getJSONArray("coordinates").getJSONArray(i1).get(1);
+                                            LatLng pointi = new LatLng(lat, lng);
+                                            points.add(pointi);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
+
+                                    List<PatternItem> pattern = Arrays.<PatternItem>asList(
+                                            new Dot(), new Gap(20), new Dash(30), new Gap(20));
+                                    Random rnd = new Random();
+                                    Polyline line = mMap.addPolyline(new PolylineOptions()
+                                            .addAll(points)
+                                            .color(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)))
+                                            .width(15)
+                                            .clickable(true)
+                                            .pattern(pattern)
+                                    );
+                                    lines.add(line);
+
+                                    try {
+                                        distances.put(line.getId(), Double.parseDouble(jsonObject.getJSONArray("routes").getJSONObject(0).getString("distance")) / 1000);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+
                                 }
-                                catch (JSONException e){
-                                    e.printStackTrace();
-                                }
 
-                                List<PatternItem> pattern = Arrays.<PatternItem>asList(
-                                        new Dot(), new Gap(20), new Dash(30), new Gap(20));
-                                Random rnd= new Random();
-                                Polyline line= mMap.addPolyline(new PolylineOptions()
-                                        .addAll(points)
-                                        .color(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)))
-                                        .width(15)
-                                        .clickable(true)
-                                        .pattern(pattern)
-                                );
-                                lines.add(line);
-
-                                try {
-                                    distances.put(line.getId(), Double.parseDouble( jsonObject.getJSONArray("routes").getJSONObject(0).getString("distance"))/1000) ;
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-
-                        };
-                        mainHandler.post(myRunnable);
+                            };
+                            mainHandler.post(myRunnable);
+                        }
                     }
 
 
