@@ -92,6 +92,7 @@
 
         <activity android:name=".UserActivities.OfflineWarningActivity" />
         <activity android:name=".UserActivities.AccountActivity"></activity>
+        <activity android:name=".LoginTestFlavor.LoginTestActivity"></activity>
     </application>
 
 </manifest>

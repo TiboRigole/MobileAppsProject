@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -303,6 +304,8 @@ public class InlogActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(Response response) throws IOException {
+
+                    handleLoginResponse(response);
                     System.out.println("response code "+ response.code());
                     if(response.code()==200) {
                         // login ok, set current user local
@@ -336,6 +339,12 @@ public class InlogActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    //nodig voor het JUnit testen van een async methode
+    @VisibleForTesting
+    public void handleLoginResponse(Response response){
+        //handle login response here
     }
 
     /**
