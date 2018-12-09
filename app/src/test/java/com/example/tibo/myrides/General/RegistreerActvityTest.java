@@ -8,11 +8,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.tibo.myrides.R;
+import com.google.firebase.FirebaseApp;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 
 
 import java.util.concurrent.ExecutionException;
@@ -21,71 +25,41 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 public class RegistreerActvityTest {
 
-    // we maken hier variabelen lokaal aan, zodat we ze kunnen makkelijker testen
-    TextWatcher paswoordCounter;
-    Button registreerButton;
-    EditText paswoordText;
-    EditText bevestigPaswoordText;
-    TextView paswoordLengteView;
-    RegistreerActvity registreerActvity = new RegistreerActvity();
-
-
-    @Before
-    public void setUp() throws Exception {
-
-
-        //lokaal maken we deze aan zodat we hierop kunnen testen
+        /*lokaal maken we deze aan zodat we hierop kunnen testen
         paswoordLengteView = registreerActvity.findViewById(R.id.counterpaslength);
         registreerButton = registreerActvity.findViewById(R.id.registreerButton);
         paswoordText = registreerActvity.findViewById(R.id.paswoordEditView);
         bevestigPaswoordText = registreerActvity.findViewById(R.id.confirmPaswoordEditView);
-        paswoordLengteView = registreerActvity.findViewById(R.id.counterpaslength);
-
-
-        //dit is een blok blok code uit registreeractivity
-        paswoordCounter= new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //paswoordLengteView.setText(String.valueOf(s.length()));
-                if (s.length() >= 6) {
-                    paswoordLengteView.setTextColor(Color.parseColor("#dac438"));
-                    if (bevestigPaswoordText.getText().toString().equals(paswoordText.getText().toString())) {
-                        registreerButton.setEnabled(true);
-                    }
-                } else if (s.length() == 0) {
-                    paswoordLengteView.setTextColor(Color.parseColor("#20FFFFFF"));
-                    registreerButton.setEnabled(false);
-                } else {
-                    paswoordLengteView.setTextColor(Color.RED);
-                    registreerButton.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
-
-
-
-
-    }
+        paswoordLengteView = registreerActvity.findViewById(R.id.counterpaslength);*/
 
     @Test
-    public void doTest() throws Exception {
-        paswoordText.setText("veiligPaswoord123");
-        bevestigPaswoordText.setText("veiligPaswoord123");
+    public void isSafePaswoord(){
+
+        RegistreerActvity activity = Robolectric.setupActivity(RegistreerActvity.class);
+
+        EditText paswoordText = activity.findViewById(R.id.paswoordEditView);
+        EditText bevestigPaswoordText = activity.findViewById(R.id.confirmPaswoordEditView);
+        Button registreerButton = activity.findViewById(R.id.registreerButton);
+
+        paswoordText.setText("VeiligPW1234");
+        bevestigPaswoordText.setText("VeiligPW1234");
 
         Assert.assertTrue(registreerButton.isEnabled());
     }
 
+    @Test
+    public void isNotSamePaswoord(){
+        RegistreerActvity activity = Robolectric.setupActivity(RegistreerActvity.class);
 
-    @After
-    public void tearDown() throws Exception {
+        EditText paswoordText = activity.findViewById(R.id.paswoordEditView);
+        EditText bevestigPaswoordText = activity.findViewById(R.id.confirmPaswoordEditView);
+        Button registreerButton = activity.findViewById(R.id.registreerButton);
+
+        paswoordText.setText("VeiligPW1234");
+        bevestigPaswoordText.setText("VeiligPW14");
+
+        //de passwoorden zijn niet gelijk, dus de knop mag niet enabled zijn
+        Assert.assertTrue(!registreerButton.isEnabled());
     }
+
 }
