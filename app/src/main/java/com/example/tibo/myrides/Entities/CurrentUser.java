@@ -49,6 +49,8 @@ public class CurrentUser {
     }
 
     public void logout(){
+        displayName="";
+        email="";
        loggedIn=false;
     }
 
