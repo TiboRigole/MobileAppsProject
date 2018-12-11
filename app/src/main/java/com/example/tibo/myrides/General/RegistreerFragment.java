@@ -23,6 +23,7 @@ import com.example.tibo.myrides.HelperPackage.MyService;
 import com.example.tibo.myrides.R;
 
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.squareup.okhttp.Callback;
@@ -58,7 +59,10 @@ public class RegistreerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        FirebaseApp.initializeApp(this.getActivity());
         return inflater.inflate(R.layout.activity_registreer, container, false);
+
+
     }
 
     @Override
@@ -66,7 +70,6 @@ public class RegistreerFragment extends Fragment {
 
 
         // DEF FIREBASE
-        //FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
 
 

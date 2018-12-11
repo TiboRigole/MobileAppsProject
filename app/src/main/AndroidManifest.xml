@@ -88,7 +88,7 @@
 
         <activity android:name=".UserActivities.OfflineWarningActivity" />
         <activity android:name=".UserActivities.AccountActivity"></activity>
-        <activity android:name=".TestingClasses.LoginTestFragment"></activity>
+        <!--activity android:name=".TestingClasses.LoginTestFragment"></activity>-->
     </application>
 
 </manifest>

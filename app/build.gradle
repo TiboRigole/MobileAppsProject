@@ -81,7 +81,13 @@ dependencies {
     // voor local unit test
     // Required -- JUnit 4 framework
     testImplementation 'junit:junit:4.12'
-    // Optional -- Robolectric environment
+    // Robolectric environment
     testImplementation 'androidx.test:core:1.0.0'
     testImplementation 'org.robolectric:robolectric:4.0.2'
+
+    // fragments in Robolectric mogelijk maken
+    testImplementation 'org.robolectric:shadows-supportv4:3.8'
+
+
+
 }
