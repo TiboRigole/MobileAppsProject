@@ -57,5 +57,6 @@ public class MyService extends Service {
     public void onDestroy() {
         super.onDestroy();
         player.stop();
+        player.release();
     }
 }

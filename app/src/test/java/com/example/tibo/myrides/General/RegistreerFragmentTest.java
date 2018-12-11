@@ -1,29 +1,17 @@
 package com.example.tibo.myrides.General;
 
-import android.graphics.Color;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import com.example.tibo.myrides.R;
-import com.google.firebase.FirebaseApp;
 
-import org.junit.After;
+import com.example.tibo.myrides.R;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
 
 
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
-public class RegistreerActvityTest {
+public class RegistreerFragmentTest {
 
         /*lokaal maken we deze aan zodat we hierop kunnen testen
         paswoordLengteView = registreerActvity.findViewById(R.id.counterpaslength);
@@ -35,7 +23,7 @@ public class RegistreerActvityTest {
     @Test
     public void isSafePaswoord(){
 
-        RegistreerActvity activity = Robolectric.setupActivity(RegistreerActvity.class);
+        RegistreerFragment activity = Robolectric.setupActivity(RegistreerFragment.class);
 
         EditText paswoordText = activity.findViewById(R.id.paswoordEditView);
         EditText bevestigPaswoordText = activity.findViewById(R.id.confirmPaswoordEditView);
@@ -50,7 +38,7 @@ public class RegistreerActvityTest {
 
     @Test
     public void isNotSamePaswoord(){
-        RegistreerActvity activity = Robolectric.setupActivity(RegistreerActvity.class);
+        RegistreerFragment activity = Robolectric.setupActivity(RegistreerFragment.class);
 
         EditText paswoordText = activity.findViewById(R.id.paswoordEditView);
         EditText bevestigPaswoordText = activity.findViewById(R.id.confirmPaswoordEditView);

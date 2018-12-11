@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.tibo.myrides.TestingClasses.LoginTestActivity;
+import com.example.tibo.myrides.TestingClasses.LoginTestFragment;
 import com.squareup.okhttp.Response;
 
 import org.junit.Rule;
@@ -26,10 +26,10 @@ public class TestAsyncLoginSucces {
     private static final String TAG = TestAsyncLoginSucces.class.getSimpleName();
 
     @Rule
-    public ActivityTestRule<LoginTestActivity> mActivityRule =
-            new ActivityTestRule<>(LoginTestActivity.class);
+    public ActivityTestRule<LoginTestFragment> mActivityRule =
+            new ActivityTestRule<>(LoginTestFragment.class);
 
-    private LoginTestActivity testActivity = null;
+    private LoginTestFragment testActivity = null;
 
     @Test
     public void testLoginSucces() throws Exception {
@@ -53,7 +53,7 @@ public class TestAsyncLoginSucces {
 
 
 
-        testActivity.setLoginCallback(new LoginTestActivity.Callback() {
+        testActivity.setLoginCallback(new LoginTestFragment.Callback() {
             @Override
             public void onHandleResponseCalled(Response response) {
                 Log.v("androidTest", "onHandleResponseCalled in thread " + Thread.currentThread().getId());

@@ -1,11 +1,19 @@
 package com.example.tibo.myrides.General;
 
+
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -29,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+
+        FragmentManager fragmentManager= getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+        InlogFragment inlogFragment= new InlogFragment();
+        fragmentTransaction.add(R.id.fragmentContainer, inlogFragment, "inlog");
+        fragmentTransaction.commit();
 
 
         startService(new Intent(this, MyService.class));
@@ -59,7 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, InlogActivity.class));
+                FragmentManager fragmentManager= getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+                InlogFragment inlogFragment= new InlogFragment();
+                fragmentTransaction.replace(R.id.fragmentContainer, inlogFragment, "inlog");
+                fragmentTransaction.commit();
+                //startActivity(new Intent(MainActivity.this, InlogFragment.class));
             }
         });
 
@@ -67,7 +86,14 @@ public class MainActivity extends AppCompatActivity {
         registreerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, RegistreerActvity.class));
+                System.out.println("registreer frame");
+                FragmentManager fragmentManager= getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+                RegistreerFragment registreerFragment= new RegistreerFragment();
+                fragmentTransaction.replace(R.id.fragmentContainer, registreerFragment, "registreer");
+                fragmentTransaction.commit();
+
+                //startActivity(new Intent(MainActivity.this, RegistreerFrame.class));
             }
         });
     }
@@ -80,22 +106,31 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.i("activitylifecycle","onStop triggered");
+        stopService(new Intent(this, MyService.class));
         super.onPause();
-
     }
 
     @Override
     protected void onStop() {
+        Log.i("activitylifecycle","onStop triggered");
+        stopService(new Intent(this, MyService.class));
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        System.out.println("stop service");
+        Log.i("activitylifecycle","onDestroy triggered");
         stopService(new Intent(this, MyService.class));
+        super.onDestroy();
+
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        Log.i("activitylifecycle","onSaveInstanceState triggered");
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
 
     @Override
     public void onBackPressed() {
@@ -105,4 +140,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d("FBLOGIN", "onactivityResult binnengekomen!");
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("inlog");
+        fragment.onActivityResult(requestCode, resultCode, data);
+    }
 }

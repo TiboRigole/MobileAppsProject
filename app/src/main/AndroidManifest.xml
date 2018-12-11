@@ -23,7 +23,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI" />
 
-        <service android:enabled="true" android:name=".HelperPackage.MyService" />
+        <service android:enabled="true" android:name=".HelperPackage.MyService" android:stopWithTask="true" />
 
         <receiver android:name=".HelperPackage.NetworkChangeReceiver">
             <intent-filter>
@@ -43,12 +43,8 @@
         <activity
             android:name=".General.AboutActivity"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".General.InlogActivity"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".General.RegistreerActvity"
-            android:theme="@style/AppTheme" />
+
+
         <activity
             android:name=".UserActivities.HomeActivity"
             android:theme="@style/AppTheme" />
@@ -92,7 +88,7 @@
 
         <activity android:name=".UserActivities.OfflineWarningActivity" />
         <activity android:name=".UserActivities.AccountActivity"></activity>
-        <activity android:name=".TestingClasses.LoginTestActivity"></activity>
+        <activity android:name=".TestingClasses.LoginTestFragment"></activity>
     </application>
 
 </manifest>

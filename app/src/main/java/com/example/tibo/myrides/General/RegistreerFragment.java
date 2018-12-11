@@ -3,12 +3,15 @@ package com.example.tibo.myrides.General;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,26 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.tibo.myrides.Entities.CurrentUser;
+import com.example.tibo.myrides.HelperPackage.MyService;
 import com.example.tibo.myrides.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -49,7 +38,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 
-public class RegistreerActvity extends AppCompatActivity {
+public class RegistreerFragment extends Fragment {
 
     // INIT LAYOUT
     private EditText emailText;
@@ -60,17 +49,20 @@ public class RegistreerActvity extends AppCompatActivity {
     private Button registreerButton;
     private ImageView warningBevestiging;
     private ImageView correcteBevestiging;
-    private Button goBack;
+
 
 
     // INIT FIREBASE
     FirebaseFirestore db;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registreer);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_registreer, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
 
         // DEF FIREBASE
@@ -80,18 +72,18 @@ public class RegistreerActvity extends AppCompatActivity {
 
 
         // DEF LAYOUT
-        emailText = (EditText) findViewById(R.id.emailEditView);
-        paswoordText = (EditText) findViewById(R.id.paswoordEditView);
-        bevestigPaswoordText= (EditText) findViewById(R.id.confirmPaswoordEditView);
-        usernameText= findViewById(R.id.usernameEditView);
-        paswoordLengteView=findViewById(R.id.counterpaslength);
-        registreerButton = (Button) findViewById(R.id.registreerButton);
-        goBack= (Button) findViewById(R.id.goBackButton);
+        emailText = (EditText) getView().findViewById(R.id.emailEditView);
+        paswoordText = (EditText) getView().findViewById(R.id.paswoordEditView);
+        bevestigPaswoordText= (EditText) getView().findViewById(R.id.confirmPaswoordEditView);
+        usernameText= getView().findViewById(R.id.usernameEditView);
+        paswoordLengteView=getView().findViewById(R.id.counterpaslength);
+        registreerButton = (Button) getView().findViewById(R.id.registreerButton);
+
 
 
         //init images
-        warningBevestiging= findViewById(R.id.warningPaswoordConfirmatie);
-        correcteBevestiging= findViewById(R.id.correctPaswoordConfirmatie);
+        warningBevestiging= getView().findViewById(R.id.warningPaswoordConfirmatie);
+        correcteBevestiging= getView().findViewById(R.id.correctPaswoordConfirmatie);
 
 
 
@@ -109,15 +101,6 @@ public class RegistreerActvity extends AppCompatActivity {
 
             }
         });
-
-        goBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(RegistreerActvity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
         // controle van paswoord bij editview
         TextWatcher paswoordIdemControler=new TextWatcher() {
             @Override
@@ -221,15 +204,12 @@ public class RegistreerActvity extends AppCompatActivity {
                 @Override
                 public void onResponse(Response response) throws IOException {
                     if(response.code()==200){
-                        runOnUiThread(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 try {
-                                    Toast.makeText(RegistreerActvity.this, response.body().string(), Toast.LENGTH_SHORT).show();
-
-                                    //go back to main screen
-                                    goToInlogActivity();
+                                    Toast.makeText(getActivity(), response.body().string(), Toast.LENGTH_SHORT).show();
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -239,12 +219,12 @@ public class RegistreerActvity extends AppCompatActivity {
                         });
                     }
                     else{
-                        runOnUiThread(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 try {
-                                    Toast.makeText(RegistreerActvity.this, response.body().string(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), response.body().string(), Toast.LENGTH_SHORT).show();
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -262,17 +242,8 @@ public class RegistreerActvity extends AppCompatActivity {
 
     }
 
-    private void goToInlogActivity() {
 
-        Intent intent = new Intent(this, InlogActivity.class);
-        intent.putExtra("username", usernameText.getText().toString());
-        startActivity(intent);
-    }
 
-    @Override
-    public void onBackPressed() {
-        if(false){
-            super.onBackPressed();
-        }
-    }
+
+
 }

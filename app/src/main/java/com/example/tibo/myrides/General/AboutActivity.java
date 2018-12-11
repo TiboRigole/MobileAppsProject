@@ -1,6 +1,7 @@
 package com.example.tibo.myrides.General;
 
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.tibo.myrides.HelperPackage.MyService;
 import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
 
@@ -55,8 +57,11 @@ public class AboutActivity extends AppCompatActivity {
     }
 
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, MyService.class));
+    }
 
     @Override
     public void onBackPressed() {

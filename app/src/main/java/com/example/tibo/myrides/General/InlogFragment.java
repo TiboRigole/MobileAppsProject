@@ -8,17 +8,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tibo.myrides.Entities.CurrentUser;
-import com.example.tibo.myrides.Entities.Rit;
 import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.RoomPackage.AnApplication;
 import com.example.tibo.myrides.RoomPackage.AppDatabase;
@@ -53,7 +55,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InlogActivity extends AppCompatActivity {
+public class InlogFragment extends Fragment {
 
     FirebaseFirestore db;
 
@@ -76,29 +78,35 @@ public class InlogActivity extends AppCompatActivity {
     private Button goBack;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
 
         Log.i("activitylifecycle","onCreate triggered");
 
-        setContentView(R.layout.activity_inlog);
+
+
+
+
+        return inflater.inflate(R.layout.activity_inlog, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         db=FirebaseFirestore.getInstance();
 
         // ROOM
-        application = (AnApplication) getApplication();
+        application = (AnApplication) getActivity().getApplication();
         mDatabase = application.getDatabase();
 
         //GUI
         //init buttons
-        fbloginButton = findViewById(R.id.fb_login_button);
-        logInButton = (Button) findViewById(R.id.logInButton);
-        goBack= (Button) findViewById(R.id.goBackButton);
-
+        fbloginButton = getView().findViewById(R.id.fb_login_button);
+        logInButton = (Button) getView().findViewById(R.id.logInButton);
 
         //init textviews
-        usernameTextView = findViewById(R.id.editTextDisplayName);
-        paswoordTextView = findViewById(R.id.editTextPaswoord);
+        usernameTextView = getView().findViewById(R.id.editTextDisplayName);
+        paswoordTextView = getView().findViewById(R.id.editTextPaswoord);
 
         //logica buttons
 
@@ -118,14 +126,6 @@ public class InlogActivity extends AppCompatActivity {
             }
         });
 
-
-        goBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(InlogActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
         //FACEBOOK
@@ -182,13 +182,13 @@ public class InlogActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 Log.d("FBLOGIN", "facebook:onCancel");
-                Toast.makeText(InlogActivity.this,"facebook login gecanceld!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"facebook login gecanceld!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d("FBLOGIN", "facebook:onError", error);
-                Toast.makeText(InlogActivity.this,"facebook login error!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"facebook login error!", Toast.LENGTH_SHORT).show();
 
                 //updateUI(null);
 
@@ -196,20 +196,23 @@ public class InlogActivity extends AppCompatActivity {
         });
 
         //vanuit de registreerpagina komt een intent
-        Bundle bundle = getIntent().getExtras();
+        Bundle bundle = getActivity().getIntent().getExtras();
         if(bundle.get("username")!= null){
             usernameTextView.setText(bundle.get("username").toString());
         }
 
-        SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String userString = myPref.getString("username","");
         if(!userString.equals("")){usernameTextView.setText(userString);}
 
+
+
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void hideKeyBoard() {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @Override
@@ -257,17 +260,7 @@ public class InlogActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i("activitylifecycle","onPause triggered");
-    }
 
-    @Override
-    protected void onResume() {
-        Log.i("activitylifecycle","onResume triggered");
-        super.onResume();
-    }
 
     /**
      * login aan de hand van een displayname
@@ -322,11 +315,11 @@ public class InlogActivity extends AppCompatActivity {
                         updateUIAfterLogin(CurrentUser.getInstance());
                     }
                     else{
-                        runOnUiThread(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    Toast.makeText(InlogActivity.this, response.body().string(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), response.body().string(), Toast.LENGTH_SHORT).show();
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -401,7 +394,7 @@ public class InlogActivity extends AppCompatActivity {
 
 
     private void saveOfflineUser(){
-        SharedPreferences myPref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences myPref= PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor myEditor=myPref.edit();
         JSONObject jsonUserPref= null;
         try {
@@ -436,11 +429,11 @@ public class InlogActivity extends AppCompatActivity {
         });
 
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("FBLOGIN", "onactivityResult binnengekomen!");
-        super.onActivityResult(requestCode, resultCode, data);
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("FBLOGIN", "onactivityResult binnengekomen in fragment!");
         // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
@@ -463,7 +456,7 @@ public class InlogActivity extends AppCompatActivity {
      */
     private void updateUIAfterLogin(CurrentUser user) {
         if (user.isLoggedIn()) {
-            startActivity(new Intent(InlogActivity.this, HomeActivity.class));
+            startActivity(new Intent(getActivity(), HomeActivity.class));
         }
 
     }
@@ -482,27 +475,7 @@ public class InlogActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    // This callback is called only when there is a saved instance that is previously saved by using
-    // onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
-    // other state here, possibly usable after onStart() has completed.
-    // The savedInstanceState Bundle is same as the one used in onCreate().
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.i("activitylifecycle","onRestoreInstanceState triggered");
-        usernameTextView.setText(savedInstanceState.getString("username"));
-    }
-
-    @Override
-    protected void onDestroy() { // wordt gecalled als je scherm roteert
-        super.onDestroy();
-        Log.i("activitylifecycle","onDestroy triggered");
-    }
 
 
-    @Override
-    public void onBackPressed() {
-        if(false){
-            super.onBackPressed();
-        }
-    }
+
 }
