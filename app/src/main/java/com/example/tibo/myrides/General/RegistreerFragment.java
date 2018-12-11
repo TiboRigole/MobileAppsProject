@@ -59,7 +59,9 @@ public class RegistreerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FirebaseApp.initializeApp(this.getActivity());
+
+        FirebaseApp.initializeApp(getActivity());
+
         return inflater.inflate(R.layout.activity_registreer, container, false);
 
 

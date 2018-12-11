@@ -1,66 +1,71 @@
 package com.example.tibo.myrides.General;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.tibo.myrides.BuildConfig;
 import com.example.tibo.myrides.R;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.InitializationError;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
+import org.robolectric.util.FragmentTestUtil;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startFragment;
+import static org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startVisibleFragment;
 
-@RunWith(RobolectricOverrider.class)
+@RunWith(RobolectricTestRunner.class)
 public class RegistreerFragmentTest {
 
+    private RegistreerFragment fragment;
+
+    EditText paswoordText;
+    EditText bevestigPaswoordText;
+    Button registreerButton;
+
+
+    @Before
+    public void setUp() throws Exception {
+
+        fragment = new RegistreerFragment();
+
+        startVisibleFragment(fragment);
+
+        paswoordText = fragment.getActivity().findViewById(R.id.paswoordEditView);
+        bevestigPaswoordText = fragment.getActivity().findViewById(R.id.confirmPaswoordEditView);
+        registreerButton = fragment.getActivity().findViewById(R.id.registreerButton);
+
+
+    }
+
     @Test
-    public void isSafePaswoord(){
+    public void exists() throws Exception{
+        Assert.assertNotNull(fragment);
+    }
 
-        RegistreerFragment registreerFragment = new RegistreerFragment();
+    @Test
+    public void textinpwt() throws Exception{
+        Assert.assertTrue(paswoordText.isEnabled());
+    }
 
-        startFragment( registreerFragment);
-
-        LayoutInflater inflater = registreerFragment.getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.activity_registreer, null);
-
-        EditText paswoordText = (EditText)  view.findViewById(R.id.paswoordEditView);
-        EditText bevestigPaswoordText = (EditText) view.findViewById(R.id.confirmPaswoordEditView);
-        Button registreerButton = (Button) view.findViewById(R.id.registreerButton);
-
+    @Test
+    public void correctPaswoord() throws Exception{
         paswoordText.setText("VeiligPW1234");
         bevestigPaswoordText.setText("VeiligPW1234");
 
-        // de paswoorden zijn gelijk, we moeten dus kunnen registreren
-        assertTrue(registreerButton.isEnabled());
+        //de passwoorden zijn gelijk, dus de knop mag moet enabled zijn
+        Assert.assertTrue(registreerButton.isEnabled());
     }
 
-    /*@Test
-    public void isNotSamePaswoord(){
-        RegistreerFragment activity = Robolectric.setupActivity(RegistreerFragment.class);
-
-        EditText paswoordText = activity.findViewById(R.id.paswoordEditView);
-        EditText bevestigPaswoordText = activity.findViewById(R.id.confirmPaswoordEditView);
-        Button registreerButton = activity.findViewById(R.id.registreerButton);
-
+    @Test
+    public void foutPaswoord() throws Exception{
         paswoordText.setText("VeiligPW1234");
         bevestigPaswoordText.setText("VeiligPW14");
 
         //de passwoorden zijn niet gelijk, dus de knop mag niet enabled zijn
         Assert.assertTrue(!registreerButton.isEnabled());
-    }*/
+    }
 
 }
