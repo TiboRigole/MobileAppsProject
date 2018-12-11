@@ -48,6 +48,9 @@ public class CurrentUser {
         this.loggedIn = loggedIn;
     }
 
+    public void goOffline(){
+        loggedIn=false;
+    }
     public void logout(){
         displayName="";
         email="";

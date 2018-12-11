@@ -110,7 +110,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                             JSONObject userJson= new JSONObject(userString);
                             CurrentUser.getInstance().setDisplayName(userJson.getString("displayName"));
                             CurrentUser.getInstance().setEmail(userJson.getString("email"));
-                            CurrentUser.getInstance().logout();
+                            CurrentUser.getInstance().goOffline();
 
                             context.startActivity(new Intent(context, HomeActivity.class));
 
