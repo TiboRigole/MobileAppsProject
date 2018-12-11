@@ -19,9 +19,17 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.example.tibo.myrides.Entities.CurrentUser;
 import com.example.tibo.myrides.HelperPackage.MyService;
 import com.example.tibo.myrides.HelperPackage.NetworkChangeReceiver;
 import com.example.tibo.myrides.R;
+import com.example.tibo.myrides.UserActivities.HomeActivity;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -101,6 +109,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        AccessToken accessToken= AccessToken.getCurrentAccessToken();
+        if(accessToken!=null && !accessToken.isExpired()){
+            GraphRequest request = GraphRequest.newMeRequest(
+                    accessToken,
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.v("LoginActivity", response.toString());
+
+                            // Application code
+                            try {
+                                //object zal null zijn als er geen connectie met internet is
+                                if(object!=null) {
+                                    String email = object.getString("email");
+                                    String displayName = object.getString("name"); // 01/31/1980 format
+
+
+                                    CurrentUser.getInstance().setDisplayName(displayName);
+                                    CurrentUser.getInstance().setEmail(email);
+                                    CurrentUser.getInstance().setLoggedIn(true);
+                                    updateUIAfterLogin(CurrentUser.getInstance());
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,name,email,gender,birthday");
+            request.setParameters(parameters);
+            request.executeAsync();
+
+        }
+        else{
+            CurrentUser.getInstance().disconnectFromFacebook();
+            updateUIAfterLogin(CurrentUser.getInstance());
+        }
 
     }
 
@@ -145,5 +191,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d("FBLOGIN", "onactivityResult binnengekomen!");
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("inlog");
         fragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void updateUIAfterLogin(CurrentUser user) {
+        if (user.isLoggedIn()) {
+            startActivity(new Intent(MainActivity.this,  HomeActivity.class));
+        }
+
     }
 }
