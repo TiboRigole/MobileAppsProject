@@ -20,32 +20,30 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeoutException;
 
-import androidx.test.espresso.Espresso;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.junit.Assert.*;
-
 @RunWith(AndroidJUnit4.class)
-public class ServiceTest {
+public class ServiceTestInMainActivity {
 
     @Rule
     public final ActivityTestRule<MainActivity> myActivityTestRule =
             new ActivityTestRule<>(MainActivity.class );
 
+    private Context context;
+    private ActivityManager manager;
 
     @Before
-    public void setUp() throws TimeoutException {
+    public void setUp() throws Exception {
 
-        //get the service from the activity
+        //get some values
+        context = myActivityTestRule.getActivity();
+        manager = (ActivityManager) myActivityTestRule.getActivity().getSystemService(context.ACTIVITY_SERVICE);
+
+
     }
 
     @Test
-    public void serviceActive(){
-        //checks if the service is running
+    public void serviceActiveInMainActivity(){
 
-        Context context = myActivityTestRule.getActivity();
-        ActivityManager manager = (ActivityManager) myActivityTestRule.getActivity().getSystemService(context.ACTIVITY_SERVICE);
+        //checks if the service is running in this activity
 
         boolean result = false;
 
@@ -55,22 +53,8 @@ public class ServiceTest {
             }
         }
 
-        Log.d("servicetest","result = "+result);
-
         Assert.assertTrue(result);
 
     }
-
-    //om nu een fragment te openen :
-    /*
-        All you have to do is to tell the JUnit that you need to perform
-        an operation first before running your tests.
-        This is done by making a function, let’s call it “setUp()”,
-        and annotating it with @Before annotations.
-
-        To change the fragment, you need to get the fragment manager and in order to do that,
-         you need to get the activity. All this can be done using the rule object we created:
-
-     */
 
 }
