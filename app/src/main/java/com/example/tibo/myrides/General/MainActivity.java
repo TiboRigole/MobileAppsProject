@@ -38,7 +38,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton infoButton;
+
     private Button inlogButton;
     private Button registreerButton;
     private BroadcastReceiver br;
@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         this.registerReceiver(br, filter);
 
-        //infoButton init
-        infoButton = (ImageButton) findViewById(R.id.infoImageButton);
 
         //inlogButton init
         inlogButton = (Button) findViewById(R.id.inlogButton);
@@ -80,13 +78,7 @@ public class MainActivity extends AppCompatActivity {
         //registreerButton init
         registreerButton = (Button) findViewById(R.id.naarRegistreerPaginaButton);
 
-        //infoButton logica
-        infoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AboutActivity.class));
-            }
-        });
+
 
         //inlogButton logica
         inlogButton.setOnClickListener(new View.OnClickListener() {
