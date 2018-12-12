@@ -57,6 +57,10 @@ import java.util.List;
 
 public class InlogFragment extends Fragment {
 
+
+
+
+
     FirebaseFirestore db;
 
     // ROOM
@@ -267,7 +271,7 @@ public class InlogFragment extends Fragment {
      * @param displayName displayname
      * @param password paswoord
      */
-    private void loginWithDisplayName(String displayName, String password){
+    public void loginWithDisplayName(String displayName, String password){
 
         OkHttpClient client = new OkHttpClient();
 
@@ -290,6 +294,7 @@ public class InlogFragment extends Fragment {
                     .addHeader("Postman-Token", "a2ac0538-d987-4f5c-8795-5a199e0ef4fd")
                     .build();
             client.newCall(request).enqueue(new Callback() {
+
                 @Override
                 public void onFailure(Request request, IOException e) {
                     e.printStackTrace();
@@ -336,10 +341,11 @@ public class InlogFragment extends Fragment {
         }
     }
 
+    // TEST //
     //nodig voor het JUnit testen van een async methode
     @VisibleForTesting
-    public void handleLoginResponse(Response response){
-        //handle login response here
+    public boolean handleLoginResponse(Response response){
+        return response.code() == 200;
     }
 
     /**

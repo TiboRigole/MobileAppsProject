@@ -87,5 +87,8 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.0.2'
     testImplementation 'org.robolectric:shadows-supportv4:3.8'
 
+    testImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
 
 }

@@ -37,7 +37,6 @@ public class RegistreerFragmentTest {
         bevestigPaswoordText = fragment.getActivity().findViewById(R.id.confirmPaswoordEditView);
         registreerButton = fragment.getActivity().findViewById(R.id.registreerButton);
 
-
     }
 
     @Test
@@ -46,7 +45,7 @@ public class RegistreerFragmentTest {
     }
 
     @Test
-    public void textinpwt() throws Exception{
+    public void editTextVindbaar() throws Exception{
         Assert.assertTrue(paswoordText.isEnabled());
     }
 
