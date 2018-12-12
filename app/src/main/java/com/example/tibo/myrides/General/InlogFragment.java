@@ -79,23 +79,10 @@ public class InlogFragment extends Fragment {
     //login button
     private Button logInButton;
 
-    private Button goBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
         Log.i("activitylifecycle","onCreate triggered");
-
-
-
-
-
-        return inflater.inflate(R.layout.activity_inlog, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         db=FirebaseFirestore.getInstance();
 
@@ -103,6 +90,14 @@ public class InlogFragment extends Fragment {
         application = (AnApplication) getActivity().getApplication();
         mDatabase = application.getDatabase();
 
+        //init manager to handle facebook manager
+        callbackManager = CallbackManager.Factory.create();
+
+        return inflater.inflate(R.layout.activity_inlog, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         //GUI
         //init buttons
         fbloginButton = getView().findViewById(R.id.fb_login_button);
@@ -122,24 +117,16 @@ public class InlogFragment extends Fragment {
                 String password = paswoordTextView.getText().toString();
 
                 if (!email.equals("") && !password.equals("")) {
-
                     hideKeyBoard();
                     loginWithDisplayName(email, password);
-
                 }
             }
         });
 
-
-
         //FACEBOOK
-        //init manager to handle facebook manager
-        callbackManager = CallbackManager.Factory.create();
-
         // facebook logica
         fbloginButton.setReadPermissions("email", "public_profile");
         Log.d("FBLOGIN","readpermissions set");
-
         // inlog callback na button press
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -199,12 +186,8 @@ public class InlogFragment extends Fragment {
             }
         });
 
-        //vanuit de registreerpagina komt een intent
-        Bundle bundle = getActivity().getIntent().getExtras();
-        if(bundle.get("username")!= null){
-            usernameTextView.setText(bundle.get("username").toString());
-        }
 
+        // laatst ingelogde user zijn naam werd onthouden en komt nu terecht in het veld van de gebruikersnaam
         SharedPreferences myPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String userString = myPref.getString("username","");
         if(!userString.equals("")){usernameTextView.setText(userString);}
@@ -222,6 +205,8 @@ public class InlogFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        // indien niet uitgelogd van Facebook, automatisch inloggen
         AccessToken accessToken= AccessToken.getCurrentAccessToken();
         if(accessToken!=null && !accessToken.isExpired()){
             GraphRequest request = GraphRequest.newMeRequest(
@@ -311,9 +296,6 @@ public class InlogFragment extends Fragment {
                         CurrentUser.getInstance().login();
                         saveOfflineUser();
 
-
-
-
                         updateUIAfterLogin(CurrentUser.getInstance());
                     }
                     else{
@@ -367,23 +349,16 @@ public class InlogFragment extends Fragment {
                     .addHeader("cache-control", "no-cache")
                     .addHeader("Postman-Token", "69946e15-6cdd-46f5-9521-7acba52858bb")
                     .build();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-
-                }
-            });
+            client.newCall(request).execute();
 
 
             updateUIAfterLogin(CurrentUser.getInstance());
         }
         catch (JSONException je){
             je.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -413,7 +388,6 @@ public class InlogFragment extends Fragment {
                     ritten.add(new RitLocal(queryDocumentSnapshot.getData()));
                 }
 
-                // TODO sla alle ritten in arraylist op in ROOM database,  verwijder vorige
                 new ritUpdate().execute(ritten);
 
             }
@@ -425,15 +399,6 @@ public class InlogFragment extends Fragment {
         });
 
     }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("FBLOGIN", "onactivityResult binnengekomen in fragment!");
-        // Pass the activity result back to the Facebook SDK
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
 
     private static class ritUpdate extends AsyncTask<List<RitLocal>, Void, Void>
     {
@@ -469,6 +434,15 @@ public class InlogFragment extends Fragment {
 
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("FBLOGIN", "onactivityResult binnengekomen in fragment!");
+        // Pass the activity result back to the Facebook SDK
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 

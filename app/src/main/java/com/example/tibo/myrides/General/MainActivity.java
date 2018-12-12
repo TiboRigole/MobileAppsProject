@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // zorgt dit voor problemen?
+
         FirebaseApp.initializeApp(this);
         FacebookSdk.sdkInitialize(this);
 
@@ -163,14 +163,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.i("activitylifecycle", "onStop triggered");
-        stopService(new Intent(this, MyService.class));
+        this.unregisterReceiver(br);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         Log.i("activitylifecycle", "onDestroy triggered");
-        stopService(new Intent(this, MyService.class));
         super.onDestroy();
 
     }
@@ -183,9 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (false) {
-            super.onBackPressed();
-        }
+
     }
 
 
