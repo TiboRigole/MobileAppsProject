@@ -1,7 +1,9 @@
 package com.example.tibo.myrides.General;
 
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -53,36 +55,39 @@ public class MainActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager= getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        InlogFragment inlogFragment= new InlogFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        InlogFragment inlogFragment = new InlogFragment();
         fragmentTransaction.add(R.id.fragmentContainer, inlogFragment, "inlog");
         fragmentTransaction.commit();
 
 
+        //start de service op in de bepaalde ruimte
         startService(new Intent(this, MyService.class));
+
+
         // broadcastreceiver
-        br= new NetworkChangeReceiver();
+        br = new NetworkChangeReceiver();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         this.registerReceiver(br, filter);
 
 
         //inlogButton init
-        inlogButton = (Button)findViewById(R.id.inlogButton);
+        inlogButton = (Button) findViewById(R.id.inlogButton);
 
         //registreerButton init
-        registreerButton = (Button)findViewById(R.id.naarRegistreerPaginaButton);
+        registreerButton = (Button) findViewById(R.id.naarRegistreerPaginaButton);
 
 
 
         //inlogButton logica
-        inlogButton.setOnClickListener(new View.OnClickListener(){
+        inlogButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                FragmentManager fragmentManager= getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-                InlogFragment inlogFragment= new InlogFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                InlogFragment inlogFragment = new InlogFragment();
                 fragmentTransaction.replace(R.id.fragmentContainer, inlogFragment, "inlog");
                 fragmentTransaction.commit();
                 //startActivity(new Intent(MainActivity.this, InlogFragment.class));
@@ -94,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 System.out.println("registreer frame");
-                FragmentManager fragmentManager= getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-                RegistreerFragment registreerFragment= new RegistreerFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                RegistreerFragment registreerFragment = new RegistreerFragment();
                 fragmentTransaction.replace(R.id.fragmentContainer, registreerFragment, "registreer");
                 fragmentTransaction.commit();
 
@@ -108,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        AccessToken accessToken= AccessToken.getCurrentAccessToken();
-        if(accessToken!=null && !accessToken.isExpired()){
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if (accessToken != null && !accessToken.isExpired()) {
             GraphRequest request = GraphRequest.newMeRequest(
                     accessToken,
                     new GraphRequest.GraphJSONObjectCallback() {
@@ -120,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                             // Application code
                             try {
                                 //object zal null zijn als er geen connectie met internet is
-                                if(object!=null) {
+                                if (object != null) {
                                     String email = object.getString("email");
                                     String displayName = object.getString("name"); // 01/31/1980 format
 
@@ -141,8 +146,7 @@ public class MainActivity extends AppCompatActivity {
             request.setParameters(parameters);
             request.executeAsync();
 
-        }
-        else{
+        } else {
             CurrentUser.getInstance().disconnectFromFacebook();
             updateUIAfterLogin(CurrentUser.getInstance());
         }
@@ -151,21 +155,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        Log.i("activitylifecycle","onStop triggered");
+        Log.i("activitylifecycle", "onStop triggered");
         stopService(new Intent(this, MyService.class));
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.i("activitylifecycle","onStop triggered");
+        Log.i("activitylifecycle", "onStop triggered");
         stopService(new Intent(this, MyService.class));
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.i("activitylifecycle","onDestroy triggered");
+        Log.i("activitylifecycle", "onDestroy triggered");
         stopService(new Intent(this, MyService.class));
         super.onDestroy();
 
@@ -173,13 +177,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        Log.i("activitylifecycle","onSaveInstanceState triggered");
+        Log.i("activitylifecycle", "onSaveInstanceState triggered");
         super.onSaveInstanceState(outState, outPersistentState);
     }
 
     @Override
     public void onBackPressed() {
-        if(false){
+        if (false) {
             super.onBackPressed();
         }
     }
@@ -194,8 +198,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUIAfterLogin(CurrentUser user) {
         if (user.isLoggedIn()) {
-            startActivity(new Intent(MainActivity.this,  HomeActivity.class));
+            startActivity(new Intent(MainActivity.this, HomeActivity.class));
         }
 
     }
+
 }

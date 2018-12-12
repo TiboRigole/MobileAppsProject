@@ -15,13 +15,12 @@ public class MyService extends Service {
 
     PlayMP3 mp3= new PlayMP3();
     private final MediaPlayer player= new MediaPlayer();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
