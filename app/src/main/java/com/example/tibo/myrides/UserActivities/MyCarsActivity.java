@@ -101,8 +101,9 @@ public class MyCarsActivity extends AppCompatActivity {
 
         //item tappen: zet het item op selected, sluit de zijbar
         CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.navigationzijkant_view);
-        navigationView.setCheckedItem(R.id.nav_info);
+        navigationView.setCheckedItem(R.id.nav_my_cars);
         navigationView.initSelect(this, mDrawerLayout);
+
 
         // EINDE TOOLBAR EN ZIJKANTMENU SETUP
 
