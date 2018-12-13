@@ -37,14 +37,17 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car{" +
-                "eigenaar=" + eigenaar +
-                "verbruik=" + verbruik +
-                ", kenteken='" + kenteken + '\'' +
-                ", merk='" + merk + '\'' +
-                ", benzineType='" + benzineType + '\'' +
-                ", sharedWithUsers=" + sharedWithUsers +
-                '}';
+
+        StringBuilder sb = new StringBuilder(sharedWithUsers.toString());
+
+        sb.deleteCharAt(0);
+        sb.deleteCharAt(sb.length()-1);
+        return  "eigenaar: " + eigenaar + '\n' +
+                "verbruik: " + verbruik + "€/l" + '\n' +
+                "nummmerplaat: "+ kenteken +
+                " van " + merk + '\n' +
+                "benzineType: " + benzineType + '\'' + '\n' +
+                "gedeeld met:" + sb.toString();
     }
 
 
