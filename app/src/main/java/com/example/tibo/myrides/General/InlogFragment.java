@@ -349,17 +349,32 @@ public class InlogFragment extends Fragment {
                     .addHeader("cache-control", "no-cache")
                     .addHeader("Postman-Token", "69946e15-6cdd-46f5-9521-7acba52858bb")
                     .build();
-            client.newCall(request).execute();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(application, "Connected with Facebook", Toast.LENGTH_SHORT).show();
+                            updateUIAfterLogin(CurrentUser.getInstance());
+                        }
+                    });
+
+                }
+            });
 
 
-            updateUIAfterLogin(CurrentUser.getInstance());
+
         }
         catch (JSONException je){
             je.printStackTrace();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
     }
 

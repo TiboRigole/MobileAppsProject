@@ -9,37 +9,37 @@
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <Button
         android:id="@+id/registreerButton"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="8dp"
         android:ems="15"
         android:enabled="false"
         android:text="Registreer"
         android:theme="@style/buttonStyle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPaswoordEditView" />
 
     <EditText
         android:id="@+id/emailEditView"
-        android:layout_width="260dp"
+        android:layout_width="280dp"
         android:layout_height="45dp"
 
         android:layout_marginStart="8dp"
 
         android:layout_marginTop="12dp"
-
         android:layout_marginEnd="8dp"
-
         android:background="@drawable/bg_edittext_icon"
         android:drawableLeft="@drawable/ic_email_white_18dp"
         android:drawablePadding="20dp"
+
         android:ems="10"
         android:hint="Email"
-
         android:inputType="textEmailAddress"
         android:paddingLeft="8dp"
         android:paddingTop="12dp"
@@ -47,13 +47,12 @@
         android:paddingBottom="12dp"
         android:theme="@style/MyEditTextTheme"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.453"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameEditView" />
 
     <EditText
         android:id="@+id/paswoordEditView"
-        android:layout_width="260dp"
+        android:layout_width="280dp"
         android:layout_height="48dp"
 
         android:layout_marginStart="8dp"
@@ -86,29 +85,27 @@
 
     <EditText
         android:id="@+id/confirmPaswoordEditView"
-        android:layout_width="260dp"
+        android:layout_width="280dp"
         android:layout_height="48dp"
 
+        android:layout_marginStart="8dp"
+
+        android:layout_marginTop="10dp"
+
+        android:layout_marginEnd="8dp"
+
         android:background="@drawable/bg_edittext_icon"
-
         android:drawableLeft="@drawable/ic_key_white_18dp"
-
         android:drawablePadding="20dp"
-
         android:ems="10"
+        android:hint="Bevestig paswoord"
+
+
+        android:inputType="textPassword"
         android:paddingLeft="8dp"
         android:paddingTop="12dp"
         android:paddingRight="12dp"
         android:paddingBottom="12dp"
-
-
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:hint="Bevestig paswoord"
-        android:inputType="textPassword"
         android:theme="@style/MyEditTextTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.475"
@@ -166,7 +163,7 @@
     <EditText
         android:id="@+id/usernameEditView"
 
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
 
         android:layout_height="wrap_content"
 
