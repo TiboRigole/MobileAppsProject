@@ -2,6 +2,7 @@ package com.example.tibo.myrides.Entities;
 
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Car met gegevens die opgeslagen dienen te worden in de databank
@@ -23,6 +24,15 @@ public class Car {
         this.merk = merk;
         this.benzineType = benzineType;
         this.sharedWithUsers=sharedWithUsers;
+    }
+
+    public Car(Map<String,Object> data) {
+        this.eigenaar= (String) data.get("eigenaar");
+        this.verbruik = (double) data.get("verbruik");
+        this.kenteken = (String) data.get("kenteken");
+        this.merk = (String) data.get("merk");
+        this.benzineType = (String) data.get("benzineType");
+        this.sharedWithUsers= (List<String>) data.get("sharedWithUsers");
     }
 
     @Override

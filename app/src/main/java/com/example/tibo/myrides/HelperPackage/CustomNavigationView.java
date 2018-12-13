@@ -15,6 +15,7 @@ import com.example.tibo.myrides.R;
 import com.example.tibo.myrides.UserActivities.AccountActivity;
 import com.example.tibo.myrides.UserActivities.AddCarActivity;
 import com.example.tibo.myrides.UserActivities.AddDriveActivity;
+import com.example.tibo.myrides.UserActivities.MyCarsActivity;
 import com.example.tibo.myrides.UserActivities.MyDrivesActivity;
 import com.example.tibo.myrides.UserActivities.OfflineWarningActivity;
 import com.example.tibo.myrides.UserActivities.OtherDrivesActivity;
@@ -81,6 +82,17 @@ public class CustomNavigationView extends NavigationView {
                         if (menuItem.getItemId() == R.id.nav_add_car) {
                             if(currentUser.isLoggedIn()) {
                                 context.startActivity(new Intent(context, AddCarActivity.class));
+                            }
+                            else{
+                                context.startActivity(new Intent(context, OfflineWarningActivity.class));
+                            }
+
+                        }
+
+                        if (menuItem.getItemId() == R.id.nav_my_cars){
+
+                            if(currentUser.isLoggedIn()) {
+                                context.startActivity(new Intent(context, MyCarsActivity.class));
                             }
                             else{
                                 context.startActivity(new Intent(context, OfflineWarningActivity.class));

@@ -18,6 +18,10 @@
             android:icon="@drawable/ic_route"
             android:title="My Drives"/>
         <item
+            android:id="@+id/nav_my_cars"
+            android:icon="@drawable/ic_car"
+            android:title="My Cars"/>
+        <item
             android:id="@+id/nav_other_drives"
             android:icon="@drawable/ic_otherroutes"
             android:title="Other Drives"/>

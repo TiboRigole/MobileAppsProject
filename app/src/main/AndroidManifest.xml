@@ -4,17 +4,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-
-
     <application
-        android:allowBackup="true"
         android:name=".RoomPackage.AnApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/logoappyellow"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logoappyellow"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -23,7 +23,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCC6_SCEF4zQaG5fbR-WyWKEEImFycQWsI" />
 
-        <service android:enabled="true" android:name=".HelperPackage.MyService" android:stopWithTask="true" />
+        <service
+            android:name=".HelperPackage.MyService"
+            android:enabled="true"
+            android:stopWithTask="true" />
 
         <receiver android:name=".HelperPackage.NetworkChangeReceiver">
             <intent-filter>
@@ -40,8 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".UserActivities.HomeActivity"
             android:theme="@style/AppTheme" />
@@ -84,7 +85,8 @@
         <!-- EINDE FACEBOOK STUFF -->
 
         <activity android:name=".UserActivities.OfflineWarningActivity" />
-        <activity android:name=".UserActivities.AccountActivity"></activity>
+        <activity android:name=".UserActivities.AccountActivity" />
+        <activity android:name=".UserActivities.MyCarsActivity"></activity>
     </application>
 
 </manifest>
