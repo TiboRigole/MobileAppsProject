@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             CurrentUser.getInstance().disconnectFromFacebook();
-            updateUIAfterLogin(CurrentUser.getInstance());
+            //updateUIAfterLogin(CurrentUser.getInstance());
         }
 
     }

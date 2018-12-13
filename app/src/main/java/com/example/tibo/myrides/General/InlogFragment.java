@@ -98,6 +98,7 @@ public class InlogFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         //GUI
         //init buttons
         fbloginButton = getView().findViewById(R.id.fb_login_button);
@@ -202,52 +203,7 @@ public class InlogFragment extends Fragment {
         imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-        // indien niet uitgelogd van Facebook, automatisch inloggen
-        AccessToken accessToken= AccessToken.getCurrentAccessToken();
-        if(accessToken!=null && !accessToken.isExpired()){
-            GraphRequest request = GraphRequest.newMeRequest(
-                    accessToken,
-                    new GraphRequest.GraphJSONObjectCallback() {
-                        @Override
-                        public void onCompleted(JSONObject object, GraphResponse response) {
-                            Log.v("LoginActivity", response.toString());
-
-                            // Application code
-                            try {
-                                //object zal null zijn als er geen connectie met internet is
-                                if(object!=null) {
-                                    String email = object.getString("email");
-                                    String displayName = object.getString("name"); // 01/31/1980 format
-
-
-                                    CurrentUser.getInstance().setDisplayName(displayName);
-                                    CurrentUser.getInstance().setEmail(email);
-                                    CurrentUser.getInstance().setLoggedIn(true);
-                                    updateUIAfterLogin(CurrentUser.getInstance());
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    });
-            Bundle parameters = new Bundle();
-            parameters.putString("fields", "id,name,email,gender,birthday");
-            request.setParameters(parameters);
-            request.executeAsync();
-
-        }
-        else{
-            CurrentUser.getInstance().disconnectFromFacebook();
-            updateUIAfterLogin(CurrentUser.getInstance());
-        }
-
-
-    }
 
 
 

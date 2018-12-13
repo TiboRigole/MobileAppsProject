@@ -74,6 +74,6 @@ public class CurrentUser {
                 LoginManager.getInstance().logOut();
 
             }
-        }).executeAsync();
+        }).executeAndWait();
     }
 }
